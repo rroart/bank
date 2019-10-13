@@ -57,18 +57,32 @@ public class MyRequest {
 				.stream()
 				.collect(Collectors.toMap(entry -> entry.getKey(), Map.Entry::getValue));
 		normalizedHeaders.forEach(headerBuilder::add);
-		MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-		System.out.println(body);
-		RequestBody requestBody = RequestBody.create(JSON, body);
-
+		RequestBody requestBody = null;
+		if (body != null) {
+			MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+			System.out.println("Body " + body);
+			requestBody = RequestBody.create(JSON, body);
+		}
+		
 		URL baseUrl = new URL(baseurl);
 		URL url = new URL(baseUrl, path);
 
-		Request request = new Request.Builder().url(url)
-				.headers(headerBuilder.build())
-				.post(requestBody)
-				.build();
+		Request request = null;
 		
+		switch (method) {
+		case "POST":
+			request = new Request.Builder().url(url)
+			.headers(headerBuilder.build())
+			.post(requestBody)
+			.build();
+			break;
+		case "GET":
+			request = new Request.Builder().url(url)
+			.headers(headerBuilder.build())
+			.get()
+			.build();
+			break;
+		}		
 		KeyStore keyStore = KeyStore.getInstance("PKCS12");
 		SSLContext sslContext = new SSLUtils().getSSLContext(keyStore);
 		X509TrustManager trustManager = new SSLUtils().getTrustManager(keyStore);
