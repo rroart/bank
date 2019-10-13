@@ -1,0 +1,16 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>roart</groupId>
+    <artifactId>catwarebank-common</artifactId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>roart</groupId>
+  <artifactId>catwarebank-common-constants</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1-SNAPSHOT</version>
+  <name>Catware Bank Common Constants</name>
+  <dependencies>
+  </dependencies>
+</project>
