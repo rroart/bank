@@ -1,4 +1,4 @@
-package com.catware.consent;
+package com.catware.consent.impl;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -12,11 +12,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.catware.consent.ConsentService;
 import com.catware.constants.Constants;
 import com.catware.util.http.MyRequest;
 
-public class Consent {
+public class ConsentServiceImpl extends ConsentService {
 
+	@Override
 	public String create(String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		String requestId = UUID.randomUUID().toString();
 		Map<String, String> header = new LinkedHashMap<>();
