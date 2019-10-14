@@ -38,7 +38,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import com.catware.consent.Consent;
+import com.catware.consent.impl.ConsentServiceImpl;
 import com.catware.util.resource.ResourceUtil;
 import com.catware.util.ssl.SSLUtils;
 
@@ -94,7 +94,7 @@ public class Cat {
 		con.setRequestProperty("TPP-Redirect-URI", "http://0.0.0.0:3083");
 		con.setDoOutput(true);
 		try(OutputStream os = con.getOutputStream()) {
-			byte[] input = new Consent().getBody(60).getBytes("utf-8");
+			byte[] input = new ConsentServiceImpl().getBody(60).getBytes("utf-8");
 			os.write(input, 0, input.length);           
 		}
 		try(BufferedReader br = new BufferedReader(

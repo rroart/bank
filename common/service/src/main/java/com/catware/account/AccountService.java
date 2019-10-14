@@ -15,6 +15,11 @@ public abstract class AccountService {
 	public abstract String getBalance(String consentid, String accid) throws UnrecoverableKeyException,
 			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 
+	public abstract String getAccountTransactions(String consentid, String accid) throws UnrecoverableKeyException,
+			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
+	
+	public abstract String getAccountDetails(String consentid, String accid) throws UnrecoverableKeyException,
+			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 	
 }
 
