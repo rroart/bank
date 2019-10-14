@@ -5,26 +5,23 @@ public class Account {
 	
 	private String bban;
 	
+	private String bic;
+	
 	private String currency;
 	
 	private String name;
 	
+	private String status;
+	
+	private String usage;
+	
 	private AccountLinks _links;
 
-	public Account(String iban, String bban, String currency, String name, AccountLinks _links) {
-		super();
-		this.iban = iban;
-		this.bban = bban;
-		this.currency = currency;
-		this.name = name;
-		this._links = _links;
-	}
-	
+	private AccountBalances _balances;
+
 	public Account() {
 		super();
 	}
-
-
 
 	public String getIban() {
 		return iban;
