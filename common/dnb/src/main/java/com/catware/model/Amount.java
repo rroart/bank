@@ -1,11 +1,11 @@
 package com.catware.model;
 
-public class BalanceAmount {
+public class Amount {
 	private String amount;
 	
 	private String currency;
 
-	public BalanceAmount() {
+	public Amount() {
 		super();
 	}
 

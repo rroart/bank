@@ -3,8 +3,8 @@ package com.catware.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class AccountBalance {
-	private BalanceAmount balanceAmount;
+public class Balance {
+	private Amount balanceAmount;
 	
 	private String balanceType;
 	
@@ -14,15 +14,15 @@ public class AccountBalance {
 	
 	private LocalDate referenceDate;
 
-	public AccountBalance() {
+	public Balance() {
 		super();
 	}
 
-	public BalanceAmount getBalanceAmount() {
+	public Amount getBalanceAmount() {
 		return balanceAmount;
 	}
 
-	public void setBalanceAmount(BalanceAmount balanceAmount) {
+	public void setBalanceAmount(Amount balanceAmount) {
 		this.balanceAmount = balanceAmount;
 	}
 

@@ -1,9 +1,9 @@
 package com.catware.model;
 
 public class AccountList {
-	private Account[] accounts;
+	private AccountDetails[] accounts;
 
-	public AccountList(Account[] accounts) {
+	public AccountList(AccountDetails[] accounts) {
 		super();
 		this.accounts = accounts;
 	}
@@ -12,11 +12,11 @@ public class AccountList {
 		super();
 	}
 
-	public Account[] getAccounts() {
+	public AccountDetails[] getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(Account[] accounts) {
+	public void setAccounts(AccountDetails[] accounts) {
 		this.accounts = accounts;
 	}
 	

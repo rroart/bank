@@ -1,17 +1,17 @@
 package com.catware.model;
 
-public class AccountLinks {
+public class LinksAccountDetails {
 	private Href balances;
 	
 	private Href transactions;
 
-	public AccountLinks(Href balances, Href transactions) {
+	public LinksAccountDetails(Href balances, Href transactions) {
 		super();
 		this.balances = balances;
 		this.transactions = transactions;
 	}
 
-	public AccountLinks() {
+	public LinksAccountDetails() {
 		super();
 	}
 
