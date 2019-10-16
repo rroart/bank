@@ -34,6 +34,7 @@ public class JsonUtil {
                 return mapper.readValue(strippedtext, myclass);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
+                e.printStackTrace();
             }
         }
         return null;
@@ -61,6 +62,7 @@ public class JsonUtil {
                 return mapper.writeValueAsString(object);
             } catch (Exception e) {
                 log.error(Constants.EXCEPTION, e);
+                e.printStackTrace();
             }
         }
         return null;
