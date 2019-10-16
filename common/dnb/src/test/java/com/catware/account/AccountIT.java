@@ -10,7 +10,9 @@ import org.junit.Test;
 
 import com.catware.account.impl.AccountServiceImpl;
 import com.catware.consent.impl.ConsentServiceImpl;
+import com.catware.model.AccountDetails;
 import com.catware.model.AccountList;
+import com.catware.model.Balance;
 import com.catware.util.json.JsonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,24 +76,29 @@ public class AccountIT {
     }
     @Test
     public void accList1() throws Exception {
-    	String consentid = "56d752dc-4772-4530-adde-63578bf18a19";
+    	String consentid = "2d1f63dc-95a7-41d7-a85d-a87b8a898506";
     	String txt2 = new AccountServiceImpl().getAccount(consentid);
     	System.out.println(txt2);
     	//List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
     	//com.catware.model.Account[] accts = JsonUtil.convert(txt2, new TypeReference<com.catware.model.Account[]>() { });
     	AccountList accts = JsonUtil.convert(txt2, AccountList.class);
     	System.out.println(accts);
-    	assertEquals(accts.getAccounts().length, 2);
-    	String accid = accts.getAccounts()[0].getBban();
+    	assertEquals(accts.getAccounts().size(), 2);
+    	String accid = accts.getAccounts().get(0).getBban();
     	
     	String txt3 = new AccountServiceImpl().getAccountDetails(consentid, accid);
     	System.out.println(txt3);
-
+    	AccountDetails acct = JsonUtil.convert(txt3, AccountDetails.class);    	
+    	System.out.println(acct.getBban());
+    	
     	String txt4 = new AccountServiceImpl().getBalance(consentid, accid);
     	System.out.println(txt4);
+    	Balance balance = JsonUtil.convert(txt4, Balance.class);    	
+    	System.out.println("B" + balance);
+    	System.out.println(balance.getLastComittedTransaction());
     	
     	String txt5 = new AccountServiceImpl().getAccountTransactions(consentid, accid);
-    	System.out.println(txt4);
+    	System.out.println(txt5);
     	
     }
 
