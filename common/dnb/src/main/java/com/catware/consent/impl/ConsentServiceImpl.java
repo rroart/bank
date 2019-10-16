@@ -20,15 +20,27 @@ public class ConsentServiceImpl extends ConsentService {
 
 	@Override
 	public String create(String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		String requestId = UUID.randomUUID().toString();
 		Map<String, String> header = new LinkedHashMap<>();
-		header.put("Content-Type", "application/json; utf-8");
-		header.put("Accept", "application/json");
-		header.put("X-Request-ID", requestId);
 		header.put("PSU-ID", ssn);
 		header.put("TPP-Redirect-URI", "http://0.0.0.0:3083");
 		String body = getBody(60);
 		return new MyRequest(Constants.psd2endpoint, "v1/consents", "POST", header, body).request();
+	}
+	
+	@Override
+	public String get(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		Map<String, String> header = new LinkedHashMap<>();
+		header.put("PSU-ID", ssn);
+		header.put("TPP-Redirect-URI", "http://0.0.0.0:3083");
+		return new MyRequest(Constants.psd2endpoint, "v1/consents/" + consentid, "GET", header, null).request();
+	}
+	
+	@Override
+	public String getStatus(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		Map<String, String> header = new LinkedHashMap<>();
+		header.put("PSU-ID", ssn);
+		header.put("TPP-Redirect-URI", "http://0.0.0.0:3083");
+		return new MyRequest(Constants.psd2endpoint, "v1/consents/" + consentid + "/status", "GET", header, null).request();
 	}
 	
 	public String getBody(int validDays) {

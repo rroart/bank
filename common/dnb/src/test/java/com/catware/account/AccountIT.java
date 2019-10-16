@@ -83,8 +83,16 @@ public class AccountIT {
     	System.out.println(accts);
     	assertEquals(accts.getAccounts().length, 2);
     	String accid = accts.getAccounts()[0].getBban();
-    	String txt3 = new AccountServiceImpl().getBalance(consentid, accid);
+    	
+    	String txt3 = new AccountServiceImpl().getAccountDetails(consentid, accid);
     	System.out.println(txt3);
+
+    	String txt4 = new AccountServiceImpl().getBalance(consentid, accid);
+    	System.out.println(txt4);
+    	
+    	String txt5 = new AccountServiceImpl().getAccountTransactions(consentid, accid);
+    	System.out.println(txt4);
+    	
     }
 
 
