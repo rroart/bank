@@ -12,4 +12,10 @@ public abstract class ConsentService {
 	public abstract String create(String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
 			NoSuchAlgorithmException, CertificateException, IOException;
 
+	public abstract String get(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
+	NoSuchAlgorithmException, CertificateException, IOException;
+
+	public abstract String getStatus(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
+	NoSuchAlgorithmException, CertificateException, IOException;
+
 }

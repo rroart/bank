@@ -1,10 +1,17 @@
 package com.catware.payment;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
 public abstract class PaymentService {
 
-	public abstract String getPaymentsToApprove();
+	public abstract String getPaymentsToApprove() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 	
-	public abstract String initiateNorwegianDomesticCreditTransfer(String ssn, String debtorAccount, String creditorAccount, String creditorName, String instructedAmount);
+	public abstract String initiateNorwegianDomesticCreditTransfer(String ssn, String debtorAccount, String creditorAccount, String creditorName, String instructedAmount) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 	
 	public abstract String initiateNorwegianDomesticCreditTransferToSelf(String ssn, String debtorAccount, String creditorAccount, String instructedAmount);
 	
