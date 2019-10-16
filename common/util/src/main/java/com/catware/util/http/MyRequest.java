@@ -8,7 +8,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
@@ -51,6 +53,10 @@ public class MyRequest {
 	}
 
 	public String request() throws IOException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, CertificateException {
+		String requestId = UUID.randomUUID().toString();
+		header.put("Content-Type", "application/json; utf-8");
+		header.put("Accept", "application/json");
+		header.put("X-Request-ID", requestId);
 		Headers.Builder headerBuilder = new Headers.Builder();
 		Map<String, String> normalizedHeaders = header
 				.entrySet()
