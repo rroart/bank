@@ -1,23 +1,20 @@
 package com.catware.model;
 
-public class AccountList {
-	private AccountDetails[] accounts;
+import java.util.List;
 
-	public AccountList(AccountDetails[] accounts) {
-		super();
-		this.accounts = accounts;
-	}
+public class AccountList {
+	private List<AccountDetails> accounts;
 
 	public AccountList() {
 		super();
 	}
 
-	public AccountDetails[] getAccounts() {
+	public List<AccountDetails> getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(AccountDetails[] accounts) {
+	public void setAccounts(List<AccountDetails> accounts) {
 		this.accounts = accounts;
 	}
-	
+
 }

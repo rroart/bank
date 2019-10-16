@@ -1,12 +1,12 @@
 package com.catware.model;
 
-public class Href {
+public class HrefType {
 	private String href;
 
-	public Href() {
+	public HrefType() {
 	}
 	
-	public Href(String href) {
+	public HrefType(String href) {
 		super();
 		this.href = href;
 	}

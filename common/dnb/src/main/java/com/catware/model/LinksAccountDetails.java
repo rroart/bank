@@ -1,11 +1,11 @@
 package com.catware.model;
 
 public class LinksAccountDetails {
-	private Href balances;
+	private HrefType balances;
 	
-	private Href transactions;
+	private HrefType transactions;
 
-	public LinksAccountDetails(Href balances, Href transactions) {
+	public LinksAccountDetails(HrefType balances, HrefType transactions) {
 		super();
 		this.balances = balances;
 		this.transactions = transactions;
@@ -15,19 +15,19 @@ public class LinksAccountDetails {
 		super();
 	}
 
-	public Href getBalances() {
+	public HrefType getBalances() {
 		return balances;
 	}
 
-	public void setBalances(Href balances) {
+	public void setBalances(HrefType balances) {
 		this.balances = balances;
 	}
 
-	public Href getTransactions() {
+	public HrefType getTransactions() {
 		return transactions;
 	}
 
-	public void setTransactions(Href transactions) {
+	public void setTransactions(HrefType transactions) {
 		this.transactions = transactions;
 	}
 	
