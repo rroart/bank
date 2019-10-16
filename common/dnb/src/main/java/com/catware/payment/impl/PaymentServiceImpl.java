@@ -11,8 +11,9 @@ import java.util.Map;
 
 import com.catware.payment.PaymentService;
 import com.catware.constants.Constants;
+import com.catware.constants.DNBConstants;
 import com.catware.model.PaymentInitiationNorwayPostRequest;
-import com.catware.util.http.MyRequest;
+import com.catware.util.http.dnb.DNBRequest;
 import com.catware.util.json.JsonUtil;
 
 public class PaymentServiceImpl extends PaymentService {
@@ -21,19 +22,19 @@ public class PaymentServiceImpl extends PaymentService {
 	public String getPaymentsToApprove() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put("PSU-IP-Address", "");
-		header.put("TPP-Redirect-URI", "http://0.0.0.0:3083");
-		return new MyRequest(Constants.psd2endpoint, "v1/payments/approval", "GET", header, null).request();
+		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/payments/approval", Constants.GET, header, null).request();
 	}
 
 	@Override
 	public String initiateNorwegianDomesticCreditTransfer(String ssn, String debtorAccount, String creditorAccount,
 			String creditorName, String instructedAmount) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
-		header.put("PSU-ID", ssn);
-		header.put("TPP-Redirect-URI", "http://0.0.0.0:3083");
+		header.put(DNBConstants.PSUID, ssn);
+		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		PaymentInitiationNorwayPostRequest paymentInitiation = new PaymentInitiationNorwayPostRequest();
 		String body = JsonUtil.convert(paymentInitiation);
-		return new MyRequest(Constants.psd2endpoint, "https://sandboxapi.psd.dnb.no/v1/payments/norwegian-domestic-credit-transfers", "POST", header, body).request();
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "https://sandboxapi.psd.dnb.no/v1/payments/norwegian-domestic-credit-transfers", Constants.POST, header, body).request();
 	}
 
 	@Override
