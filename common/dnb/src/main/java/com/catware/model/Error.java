@@ -1,0 +1,32 @@
+package com.catware.model;
+
+import java.util.List;
+import java.util.Map;
+
+public class Error {
+	
+	private Map<String, HrefType> links;
+	
+	private List<TppMessageGeneric> tppMessages;
+	
+	public Error() {
+		super();
+	}
+
+	public Map<String, HrefType> getLinks() {
+		return links;
+	}
+
+	public void setLinks(Map<String, HrefType> links) {
+		this.links = links;
+	}
+
+	public List<TppMessageGeneric> getTppMessages() {
+		return tppMessages;
+	}
+
+	public void setTppMessages(List<TppMessageGeneric> tppMessages) {
+		this.tppMessages = tppMessages;
+	}
+	
+}
