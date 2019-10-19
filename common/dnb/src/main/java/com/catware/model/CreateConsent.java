@@ -1,6 +1,7 @@
 package com.catware.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CreateConsent {
 
@@ -50,8 +51,8 @@ public class CreateConsent {
 		this.recurringIndicator = recurringIndicator;
 	}
 
-	public LocalDate getValidUntil() {
-		return validUntil;
+	public String getValidUntil() {
+		return validUntil.format(DateTimeFormatter.ISO_LOCAL_DATE);
 	}
 
 	public void setValidUntil(LocalDate validUntil) {
