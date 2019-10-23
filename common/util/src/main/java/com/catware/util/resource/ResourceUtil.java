@@ -20,6 +20,8 @@ public class ResourceUtil {
 
 	public Map<String, String> getProps() throws IOException {
 		Map<String, String> map = new HashMap<>();
+		System.out.println("Working Directory = " +
+	              System.getProperty("user.dir"));
 		InputStream input = new FileInputStream("config.properties");
 
 		Properties prop = new Properties();
