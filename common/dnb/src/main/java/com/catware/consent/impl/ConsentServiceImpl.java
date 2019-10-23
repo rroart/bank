@@ -8,6 +8,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,37 +17,69 @@ import java.util.UUID;
 import com.catware.consent.ConsentService;
 import com.catware.constants.Constants;
 import com.catware.constants.DNBConstants;
+import com.catware.database.hibernate.Consent;
 import com.catware.model.ConsentAccess;
 import com.catware.model.CreateConsent;
 import com.catware.model.CreateConsentResponse;
+import com.catware.model.GetConsentResponse;
+import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
 import com.catware.util.json.JsonUtil;
 
 public class ConsentServiceImpl extends ConsentService {
 
 	@Override
-	public String create(String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public MyResponse create(String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		Consent aConsent = Consent.find(psuid);
+		if (aConsent != null) {
+			MyResponse status = getStatus(aConsent.getConsentid(), aConsent.getPsuid());
+			System.out.println("hereq");
+			System.out.println(status.getBody());
+			System.out.println("hereq");
+			MyResponse getConsentResponse = get(aConsent.getConsentid(), aConsent.getPsuid());
+			System.out.println("here2");
+			System.out.println(getConsentResponse.getBody());
+			System.out.println("here2");
+			if (getConsentResponse.getCode() == 200) {
+				GetConsentResponse consentStatus = JsonUtil.convert(getConsentResponse.getBody(), GetConsentResponse.class);
+				if (consentStatus.getValidUntil().before(new Date())) {
+					String json = JsonUtil.convert(consentStatus.get_links().get(DNBConstants.SCAREDIRECT));
+					getConsentResponse.setBody(json);
+					return getConsentResponse;
+				}
+			}
+		}
+		
 		Map<String, String> header = new LinkedHashMap<>();
-		header.put(DNBConstants.PSUID, ssn);
+		header.put(DNBConstants.PSUID, psuid);
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		String body = getBody(60);
-		String json = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents", Constants.POST, header, body).request();
-		CreateConsentResponse createConstentResponse = JsonUtil.convert(json, CreateConsentResponse.class);
-		return createConstentResponse.getConsentId();
+		MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents", Constants.POST, header, body).request();
+		String json = response.getBody();
+		System.out.println(json);
+		if (response.getCode() == 201) {
+			CreateConsentResponse createConstentResponse = JsonUtil.convert(json, CreateConsentResponse.class);
+			String consentId = createConstentResponse.getConsentId();
+			Consent consent = new Consent();
+			consent.setPsuid(psuid);
+			consent.setConsentid(consentId);
+			consent.persist();
+			String ajson = JsonUtil.convert(createConstentResponse.get_links().get(DNBConstants.SCAREDIRECT));
+			response.setBody(ajson);
+		}
+		return response;
 	}
 	
-	@Override
-	public String get(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public MyResponse get(String consentid, String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
-		header.put(DNBConstants.PSUID, ssn);
+		header.put(DNBConstants.PSUID, psuid);
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid, Constants.GET, header, null).request();
 	}
 	
-	@Override
-	public String getStatus(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public MyResponse getStatus(String consentid, String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
-		header.put(DNBConstants.PSUID, ssn);
+		header.put(DNBConstants.PSUID, psuid);
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid + "/status", Constants.GET, header, null).request();
 	}
