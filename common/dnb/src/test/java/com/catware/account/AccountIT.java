@@ -13,6 +13,7 @@ import com.catware.consent.impl.ConsentServiceImpl;
 import com.catware.model.AccountDetails;
 import com.catware.model.AccountList;
 import com.catware.model.Balance;
+import com.catware.util.http.MyResponse;
 import com.catware.util.json.JsonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,11 +26,11 @@ import okhttp3.Response;
 
 public class AccountIT {
 	
-	private static final String ssn = "31125464346";
+	private static final String psuid = "31125464346";
 	
     //@Test
     public void accList() throws Exception {
-    	String txt = new ConsentServiceImpl().create(ssn);
+    	MyResponse txt = new ConsentServiceImpl().create(psuid);
     	System.out.println(txt);
     	JSONObject jo = new JSONObject(txt);
     	String consentid = jo.getString("consentId");
@@ -71,33 +72,33 @@ public class AccountIT {
 		System.out.println(body2);
 		
 		
-    	String txt2 = new AccountServiceImpl().getAccount(consentid);
+    	MyResponse txt2 = new AccountServiceImpl().getAccount(consentid);
     	System.out.println(txt2);
     }
     @Test
     public void accList1() throws Exception {
-    	String consentid = "2d1f63dc-95a7-41d7-a85d-a87b8a898506";
-    	String txt2 = new AccountServiceImpl().getAccount(consentid);
+    	String consentid = "a7623d67-66af-42e6-bca5-463459fe9649";
+    	MyResponse txt2 = new AccountServiceImpl().getAccount(psuid);
     	System.out.println(txt2);
     	//List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
     	//com.catware.model.Account[] accts = JsonUtil.convert(txt2, new TypeReference<com.catware.model.Account[]>() { });
-    	AccountList accts = JsonUtil.convert(txt2, AccountList.class);
+    	AccountList accts = JsonUtil.convert(txt2.getBody(), AccountList.class);
     	System.out.println(accts);
     	assertEquals(accts.getAccounts().size(), 2);
     	String accid = accts.getAccounts().get(0).getBban();
     	
-    	String txt3 = new AccountServiceImpl().getAccountDetails(consentid, accid);
+    	MyResponse txt3 = new AccountServiceImpl().getAccountDetails(consentid, accid);
     	System.out.println(txt3);
-    	AccountDetails acct = JsonUtil.convert(txt3, AccountDetails.class);    	
+    	AccountDetails acct = JsonUtil.convert(txt3.getBody(), AccountDetails.class);    	
     	System.out.println(acct.getBban());
     	
-    	String txt4 = new AccountServiceImpl().getBalance(consentid, accid);
+    	MyResponse txt4 = new AccountServiceImpl().getBalance(consentid, accid);
     	System.out.println(txt4);
-    	Balance balance = JsonUtil.convert(txt4, Balance.class);    	
+    	Balance balance = JsonUtil.convert(txt4.getBody(), Balance.class);    	
     	System.out.println("B" + balance);
     	System.out.println(balance.getLastComittedTransaction());
     	
-    	String txt5 = new AccountServiceImpl().getAccountTransactions(consentid, accid);
+    	MyResponse txt5 = new AccountServiceImpl().getAccountTransactions(consentid, accid);
     	System.out.println(txt5);
     	
     }
