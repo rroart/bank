@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import com.catware.constants.DNBConstants;
 import com.catware.util.http.MyRequest;
+import com.catware.util.http.MyResponse;
 
 public class DNBRequest {
 	private String baseurl;
@@ -31,7 +32,7 @@ public class DNBRequest {
 		this.body = body;
 	}
 
-	public String request() throws IOException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, CertificateException {
+	public MyResponse request() throws IOException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, CertificateException {
 		String requestId = UUID.randomUUID().toString();
 		header.put(DNBConstants.CONTENTTYPE, "application/json; utf-8");
 		header.put(DNBConstants.ACCEPT, "application/json");
