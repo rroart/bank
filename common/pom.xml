@@ -17,6 +17,7 @@
     <module>constants</module>
     <!--module>config</module-->
     <module>dnb</module>
+    <module>factory</module>
     <!--module>smn</module>
     <module>sbanken</module-->
     <!--module>model</module-->
