@@ -53,7 +53,7 @@ public class MyRequest {
 		return httpClient;
 	}
 
-	public String request() throws IOException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, CertificateException {
+	public MyResponse request() throws IOException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, CertificateException {
 		String requestId = UUID.randomUUID().toString();
 		Headers.Builder headerBuilder = new Headers.Builder();
 		Map<String, String> normalizedHeaders = header
@@ -108,6 +108,6 @@ public class MyRequest {
 
 		System.out.println("\n------------------------------------------\n");
 
-		return body;
+		return new MyResponse(response.code(), body);
 	}
 }

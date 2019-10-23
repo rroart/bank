@@ -7,18 +7,20 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
+import com.catware.util.http.MyResponse;
+
 public abstract class AccountService {
 
-	public abstract String getAccount(String consentid) throws UnrecoverableKeyException, KeyManagementException,
+	public abstract MyResponse getAccount(String psuid) throws UnrecoverableKeyException, KeyManagementException,
 			KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 
-	public abstract String getBalance(String consentid, String accid) throws UnrecoverableKeyException,
+	public abstract MyResponse getBalance(String psuid, String accid) throws UnrecoverableKeyException,
 			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 
-	public abstract String getAccountTransactions(String consentid, String accid) throws UnrecoverableKeyException,
+	public abstract MyResponse getAccountTransactions(String psuid, String accid) throws UnrecoverableKeyException,
 			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 	
-	public abstract String getAccountDetails(String consentid, String accid) throws UnrecoverableKeyException,
+	public abstract MyResponse getAccountDetails(String psuid, String accid) throws UnrecoverableKeyException,
 			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 	
 }

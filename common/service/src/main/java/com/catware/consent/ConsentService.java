@@ -7,15 +7,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
+import com.catware.util.http.MyResponse;
+
 public abstract class ConsentService {
 
-	public abstract String create(String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
+	public abstract MyResponse create(String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
 			NoSuchAlgorithmException, CertificateException, IOException;
-
-	public abstract String get(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
-	NoSuchAlgorithmException, CertificateException, IOException;
-
-	public abstract String getStatus(String consentid, String ssn) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException,
-	NoSuchAlgorithmException, CertificateException, IOException;
 
 }
