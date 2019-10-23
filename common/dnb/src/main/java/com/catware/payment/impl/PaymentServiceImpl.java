@@ -13,13 +13,14 @@ import com.catware.payment.PaymentService;
 import com.catware.constants.Constants;
 import com.catware.constants.DNBConstants;
 import com.catware.model.PaymentInitiationNorwayPostRequest;
+import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
 import com.catware.util.json.JsonUtil;
 
 public class PaymentServiceImpl extends PaymentService {
 
 	@Override
-	public String getPaymentsToApprove() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public MyResponse getPaymentsToApprove() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put("PSU-IP-Address", "");
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
@@ -27,10 +28,10 @@ public class PaymentServiceImpl extends PaymentService {
 	}
 
 	@Override
-	public String initiateNorwegianDomesticCreditTransfer(String ssn, String debtorAccount, String creditorAccount,
+	public MyResponse initiateNorwegianDomesticCreditTransfer(String psuid, String debtorAccount, String creditorAccount,
 			String creditorName, String instructedAmount) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
-		header.put(DNBConstants.PSUID, ssn);
+		header.put(DNBConstants.PSUID, psuid);
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		PaymentInitiationNorwayPostRequest paymentInitiation = new PaymentInitiationNorwayPostRequest();
 		String body = JsonUtil.convert(paymentInitiation);
@@ -38,44 +39,44 @@ public class PaymentServiceImpl extends PaymentService {
 	}
 
 	@Override
-	public String initiateNorwegianDomesticCreditTransferToSelf(String ssn, String debtorAccount,
+	public MyResponse initiateNorwegianDomesticCreditTransferToSelf(String psuid, String debtorAccount,
 			String creditorAccount, String instructedAmount) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getPaymentDetails(String paymentproduct, String paymentid) {
+	public MyResponse getPaymentDetails(String paymentproduct, String paymentid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getPaymentStatus(String paymentproduct, String paymentid) {
+	public MyResponse getPaymentStatus(String paymentproduct, String paymentid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String initiateNewSigninngBasket(String ssn) {
+	public MyResponse initiateNewSigninngBasket(String psuid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getSigninngBasket(String basketid) {
+	public MyResponse getSigninngBasket(String basketid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String startSigninngBasket(String basketid, String ssn) {
+	public MyResponse startSigninngBasket(String basketid, String psuid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getSigninngBasketStatus(String basketid) {
+	public MyResponse getSigninngBasketStatus(String basketid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
