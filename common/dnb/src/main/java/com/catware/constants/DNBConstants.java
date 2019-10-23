@@ -16,4 +16,5 @@ public class DNBConstants {
 
 	public static final String XREQUESTID = "X-Request-ID";
 
+	public static final String SCAREDIRECT = "scaRedirect";
 }
