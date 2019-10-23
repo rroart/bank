@@ -1,8 +1,10 @@
 package com.catware.model;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class GetConsentResponse {
 
@@ -18,7 +20,9 @@ public class GetConsentResponse {
 
 	private Boolean recurringIndicator = null;
 
-	private LocalDate validUntil = null;
+	@JsonFormat
+    (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date validUntil = null;
 
 	public GetConsentResponse() {
 		super();
@@ -72,11 +76,11 @@ public class GetConsentResponse {
 		this.recurringIndicator = recurringIndicator;
 	}
 
-	public LocalDate getValidUntil() {
+	public Date getValidUntil() {
 		return validUntil;
 	}
 
-	public void setValidUntil(LocalDate validUntil) {
+	public void setValidUntil(Date validUntil) {
 		this.validUntil = validUntil;
 	}
 
