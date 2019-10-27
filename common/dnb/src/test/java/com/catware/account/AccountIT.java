@@ -72,13 +72,13 @@ public class AccountIT {
 		System.out.println(body2);
 		
 		
-    	MyResponse txt2 = new AccountServiceImpl().getAccount(consentid);
+    	MyResponse txt2 = new AccountServiceImpl().getAccount(consentid, true);
     	System.out.println(txt2);
     }
     @Test
     public void accList1() throws Exception {
     	String consentid = "a7623d67-66af-42e6-bca5-463459fe9649";
-    	MyResponse txt2 = new AccountServiceImpl().getAccount(psuid);
+    	MyResponse txt2 = new AccountServiceImpl().getAccount(psuid, true);
     	System.out.println(txt2);
     	//List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
     	//com.catware.model.Account[] accts = JsonUtil.convert(txt2, new TypeReference<com.catware.model.Account[]>() { });
@@ -87,7 +87,7 @@ public class AccountIT {
     	assertEquals(accts.getAccounts().size(), 2);
     	String accid = accts.getAccounts().get(0).getBban();
     	
-    	MyResponse txt3 = new AccountServiceImpl().getAccountDetails(consentid, accid);
+    	MyResponse txt3 = new AccountServiceImpl().getAccountDetails(consentid, accid, true);
     	System.out.println(txt3);
     	AccountDetails acct = JsonUtil.convert(txt3.getBody(), AccountDetails.class);    	
     	System.out.println(acct.getBban());

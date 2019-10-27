@@ -73,7 +73,7 @@ public class Service implements CommandLineRunner {
 	@GetMapping(path = "/accounts/{bank}/{psuid}")
     public MyResponse getAccount(@PathVariable("bank") String bank, @PathVariable("psuid") String psuid) throws Exception {
 		AccountService service = new ServiceFactory().getAccountService(bank);
-		MyResponse response = service.getAccount(psuid);
+		MyResponse response = service.getAccount(psuid, true);
 		System.out.println(response);
 		return response;
     }

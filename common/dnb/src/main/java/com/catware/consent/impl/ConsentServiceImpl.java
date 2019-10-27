@@ -22,6 +22,7 @@ import com.catware.model.ConsentAccess;
 import com.catware.model.CreateConsent;
 import com.catware.model.CreateConsentResponse;
 import com.catware.model.GetConsentResponse;
+import com.catware.model.HrefType;
 import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
 import com.catware.util.json.JsonUtil;
@@ -43,7 +44,8 @@ public class ConsentServiceImpl extends ConsentService {
 			if (getConsentResponse.getCode() == 200) {
 				GetConsentResponse consentStatus = JsonUtil.convert(getConsentResponse.getBody(), GetConsentResponse.class);
 				if (consentStatus.getValidUntil().before(new Date())) {
-					String json = JsonUtil.convert(consentStatus.get_links().get(DNBConstants.SCAREDIRECT));
+					HrefType href = consentStatus.get_links().get(DNBConstants.SCAREDIRECT);
+					String json = JsonUtil.convert(new com.catware.service.model.HrefType(href.getHref()));
 					getConsentResponse.setBody(json);
 					return getConsentResponse;
 				}

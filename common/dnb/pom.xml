@@ -12,12 +12,12 @@
   <version>0.1-SNAPSHOT</version>
   <name>Catware Bank Common DNB</name>
   <dependencies>
-   <!--dependency>
+   <dependency>
       <groupId>roart</groupId>
-      <artifactId>catware-common-model</artifactId>
+      <artifactId>catwarebank-common-model</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>roart</groupId>
       <artifactId>catware-common-config</artifactId>
       <version>0.1-SNAPSHOT</version>

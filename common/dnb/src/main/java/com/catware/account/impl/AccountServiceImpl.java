@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ import com.catware.util.json.JsonUtil;
 public class AccountServiceImpl extends AccountService {
 
 	@Override
-	public MyResponse getAccount(String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public MyResponse getAccount(String psuid, boolean withBalance) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Consent aConsent = Consent.find(psuid);
 		if (aConsent != null) {
 			String consentid = aConsent.getConsentid();
@@ -40,20 +41,28 @@ public class AccountServiceImpl extends AccountService {
 			String json = response.getBody();
 			System.out.println(json);
 			AccountList accounts = JsonUtil.convert(json, AccountList.class);
-			for (AccountDetails account : accounts.getAccounts()) {
-				String bban = account.getBban();
-				MyResponse details = getBalance(psuid, bban);
-				if (details.getCode() == 200) {
-					GetAccountBalancesResponse detail = JsonUtil.convert(details.getBody(), GetAccountBalancesResponse.class);
-					List<Balance> balances = detail.getBalances();
-					for (Balance balance : balances) {
-						if ("authorized".equals(balance.getBalanceType())) {
-							//account.
+			List<com.catware.service.model.Balance> newBalances = new ArrayList<>();
+			if (withBalance) {
+				for (AccountDetails account : accounts.getAccounts()) {
+					String bban = account.getBban();
+					MyResponse details = getBalance(psuid, bban);
+					if (details.getCode() == 200) {
+						GetAccountBalancesResponse detail = JsonUtil.convert(details.getBody(), GetAccountBalancesResponse.class);
+						List<Balance> balances = detail.getBalances();
+						for (Balance balance : balances) {
+							com.catware.service.model.Amount newAmount = new com.catware.service.model.Amount(balance.getBalanceAmount().getAmount(), balance.getBalanceAmount().getCurrency());
+							newBalances.add(new com.catware.service.model.Balance(newAmount, balance.getBalanceType(), balance.getReferenceDate()));
 						}
 					}
 				}
 			}
-			response.setBody(JsonUtil.convert(accounts));
+			List<com.catware.service.model.AccountDetails> newAccounts = new ArrayList<>();
+			for (AccountDetails acc : accounts.getAccounts()) {
+				com.catware.service.model.AccountDetails newAcc = new com.catware.service.model.AccountDetails(newBalances, acc.getBban(), acc.getCurrency(), acc.getName());
+				newAccounts.add(newAcc);
+			}
+			String newJson = JsonUtil.convert(new com.catware.service.model.AccountList(newAccounts));
+			response.setBody(newJson);
 			return response;
 		} else {
 			return new MyResponse(500, Constants.PSUWITHOUTCONSENT);
@@ -61,7 +70,7 @@ public class AccountServiceImpl extends AccountService {
 	}
 
 	@Override
-	public MyResponse getAccountDetails(String psuid, String accid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+	public MyResponse getAccountDetails(String psuid, String accid, boolean withBalance) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Consent aConsent = Consent.find(psuid);
 		if (aConsent != null) {
 			String consentid = aConsent.getConsentid();
