@@ -20,7 +20,7 @@
     <module>factory</module>
     <!--module>smn</module>
     <module>sbanken</module-->
-    <!--module>model</module-->
+    <module>model</module>
     <module>service</module>
     <module>util</module>
   </modules>
