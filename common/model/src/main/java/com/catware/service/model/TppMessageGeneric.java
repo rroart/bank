@@ -17,6 +17,12 @@ public class TppMessageGeneric {
 		return category;
 	}
 
+	public TppMessageGeneric(String category, String text) {
+		super();
+		this.category = category;
+		this.text = text;
+	}
+
 	public void setCategory(String category) {
 		this.category = category;
 	}

@@ -12,6 +12,11 @@ public class Error {
 		super();
 	}
 
+	public Error(List<TppMessageGeneric> tppMessages) {
+		super();
+		this.tppMessages = tppMessages;
+	}
+
 	public Map<String, HrefType> getLinks() {
 		return links;
 	}
