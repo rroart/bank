@@ -10,6 +10,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,8 @@ import com.catware.constants.Constants;
 import com.catware.util.ssl.SSLUtils;
 
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
+import okhttp3.HttpUrl.Builder;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,15 +35,18 @@ public class MyRequest {
 	
 	private String path;
 	
+	private Map<String, String> queries;
+	
 	private String method;
 	
 	private Map<String, String> header;
 	
 	private String body;
-	
-	public MyRequest(String baseurl, String path, String method, Map<String, String> header, String body) {
+
+	public MyRequest(String baseurl, String path, Map<String, String> queries, String method, Map<String, String> header, String body) {
 		this.baseurl = baseurl;
 		this.path = path;
+		this.queries = queries;
 		this.method = method;
 		this.header = header;
 		this.body = body;
@@ -80,9 +86,18 @@ public class MyRequest {
 			.post(requestBody)
 			.build();
 			break;
-		case Constants.GET:
-			request = new Request.Builder().url(url)
-			.headers(headerBuilder.build())
+		case Constants.GET:		
+			HttpUrl newUrl = HttpUrl.get(url);
+			if (queries != null) {
+				Builder builder = newUrl.newBuilder();
+				for (Entry<String, String> entry : queries.entrySet()) {
+					builder.addQueryParameter(entry.getKey(), entry.getValue());
+				}
+				HttpUrl newUrlWithQueries = builder.build();
+				newUrl = newUrlWithQueries;
+			}
+			request = new Request.Builder().url(newUrl)
+					.headers(headerBuilder.build())
 			.get()
 			.build();
 			break;

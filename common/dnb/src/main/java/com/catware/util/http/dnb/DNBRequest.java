@@ -18,15 +18,18 @@ public class DNBRequest {
 	
 	private String path;
 	
+	private Map<String, String> queries;
+
 	private String method;
 	
 	private Map<String, String> header;
 	
 	private String body;
 	
-	public DNBRequest(String baseurl, String path, String method, Map<String, String> header, String body) {
+	public DNBRequest(String baseurl, String path, Map<String, String> queries, String method, Map<String, String> header, String body) {
 		this.baseurl = baseurl;
 		this.path = path;
+		this.queries = queries;
 		this.method = method;
 		this.header = header;
 		this.body = body;
@@ -37,7 +40,7 @@ public class DNBRequest {
 		header.put(DNBConstants.CONTENTTYPE, "application/json; utf-8");
 		header.put(DNBConstants.ACCEPT, "application/json");
 		header.put(DNBConstants.XREQUESTID, requestId);
-		return new MyRequest(baseurl, path, method, header, body).request();
+		return new MyRequest(baseurl, path, queries, method, header, body).request();
 	}
 	
 }
