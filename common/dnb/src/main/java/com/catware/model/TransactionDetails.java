@@ -2,8 +2,11 @@ package com.catware.model;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class TransactionDetails {
 
@@ -11,7 +14,9 @@ public class TransactionDetails {
 
 	private String bankTransactionCode = null;
 
-	private LocalDate bookingDate = null;
+	@JsonFormat
+    (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date bookingDate = null;
 
 	private String checkId = null;
 
@@ -27,7 +32,9 @@ public class TransactionDetails {
 
 	private String debtorName = null;
 
-	private OffsetDateTime dnbTransactionDateTime = null;
+	@JsonFormat
+    (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private Date dnbTransactionDateTime = null;
 
 	private String dnbTransactionType = null;
 
@@ -40,6 +47,24 @@ public class TransactionDetails {
 	private String mandateId = null;
 
 	private String proprietaryBankTransactionCode = null;
+
+	private String purposeCode;
+
+	private String remittanceInformationStructured = null;
+
+	private String remittanceInformationUnstructured = null;
+
+	private Amount transactionAmount = null;
+
+	private String transactionId = null;
+
+	private String ultimateCreditor = null;
+
+	private String ultimateDebtor = null;
+
+	@JsonFormat
+    (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date valueDate = null;
 
 	public TransactionDetails() {
 		super();
@@ -61,11 +86,11 @@ public class TransactionDetails {
 		this.bankTransactionCode = bankTransactionCode;
 	}
 
-	public LocalDate getBookingDate() {
+	public Date getBookingDate() {
 		return bookingDate;
 	}
 
-	public void setBookingDate(LocalDate bookingDate) {
+	public void setBookingDate(Date bookingDate) {
 		this.bookingDate = bookingDate;
 	}
 
@@ -125,11 +150,11 @@ public class TransactionDetails {
 		this.debtorName = debtorName;
 	}
 
-	public OffsetDateTime getDnbTransactionDateTime() {
+	public Date getDnbTransactionDateTime() {
 		return dnbTransactionDateTime;
 	}
 
-	public void setDnbTransactionDateTime(OffsetDateTime dnbTransactionDateTime) {
+	public void setDnbTransactionDateTime(Date dnbTransactionDateTime) {
 		this.dnbTransactionDateTime = dnbTransactionDateTime;
 	}
 
@@ -179,6 +204,70 @@ public class TransactionDetails {
 
 	public void setProprietaryBankTransactionCode(String proprietaryBankTransactionCode) {
 		this.proprietaryBankTransactionCode = proprietaryBankTransactionCode;
+	}
+
+	public String getPurposeCode() {
+		return purposeCode;
+	}
+
+	public void setPurposeCode(String purposeCode) {
+		this.purposeCode = purposeCode;
+	}
+
+	public String getRemittanceInformationStructured() {
+		return remittanceInformationStructured;
+	}
+
+	public void setRemittanceInformationStructured(String remittanceInformationStructured) {
+		this.remittanceInformationStructured = remittanceInformationStructured;
+	}
+
+	public String getRemittanceInformationUnstructured() {
+		return remittanceInformationUnstructured;
+	}
+
+	public void setRemittanceInformationUnstructured(String remittanceInformationUnstructured) {
+		this.remittanceInformationUnstructured = remittanceInformationUnstructured;
+	}
+
+	public Amount getTransactionAmount() {
+		return transactionAmount;
+	}
+
+	public void setTransactionAmount(Amount transactionAmount) {
+		this.transactionAmount = transactionAmount;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public String getUltimateCreditor() {
+		return ultimateCreditor;
+	}
+
+	public void setUltimateCreditor(String ultimateCreditor) {
+		this.ultimateCreditor = ultimateCreditor;
+	}
+
+	public String getUltimateDebtor() {
+		return ultimateDebtor;
+	}
+
+	public void setUltimateDebtor(String ultimateDebtor) {
+		this.ultimateDebtor = ultimateDebtor;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 
 }

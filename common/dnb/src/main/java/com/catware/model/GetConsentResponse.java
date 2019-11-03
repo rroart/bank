@@ -16,7 +16,9 @@ public class GetConsentResponse {
 
 	private Integer frequencyPerDay = null;
 
-	private OffsetDateTime lastActionDate = null;
+	@JsonFormat
+	(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private Date lastActionDate = null;
 
 	private Boolean recurringIndicator = null;
 
@@ -60,11 +62,11 @@ public class GetConsentResponse {
 		this.frequencyPerDay = frequencyPerDay;
 	}
 
-	public OffsetDateTime getLastActionDate() {
+	public Date getLastActionDate() {
 		return lastActionDate;
 	}
 
-	public void setLastActionDate(OffsetDateTime lastActionDate) {
+	public void setLastActionDate(Date lastActionDate) {
 		this.lastActionDate = lastActionDate;
 	}
 
