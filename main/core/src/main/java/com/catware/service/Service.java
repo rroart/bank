@@ -88,7 +88,7 @@ public class Service implements CommandLineRunner {
 		System.out.println(response);
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.set("content-type", "application/json");
-
+		System.out.println("Resp" + HttpStatus.valueOf(response.getCode()) + " " + response.getCode());
 		return new ResponseEntity<String>(response.getBody(), responseHeaders, HttpStatus.valueOf(response.getCode()));
 	}
 }
