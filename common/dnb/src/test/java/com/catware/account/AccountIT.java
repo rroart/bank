@@ -13,6 +13,7 @@ import com.catware.consent.impl.ConsentServiceImpl;
 import com.catware.model.AccountDetails;
 import com.catware.model.AccountList;
 import com.catware.model.Balance;
+import com.catware.model.GetAccountBalancesResponse;
 import com.catware.util.http.MyResponse;
 import com.catware.util.json.JsonUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -75,33 +76,43 @@ public class AccountIT {
     	MyResponse txt2 = new AccountServiceImpl().getAccount(consentid, true);
     	System.out.println(txt2);
     }
-    @Test
+    
+    //@Test
     public void accList1() throws Exception {
-    	String consentid = "a7623d67-66af-42e6-bca5-463459fe9649";
     	MyResponse txt2 = new AccountServiceImpl().getAccount(psuid, true);
     	System.out.println(txt2);
     	//List<ResultMeta> resultMeta = new ObjectMapper().convertValue(objectList, new TypeReference<List<ResultMeta>>() { });
     	//com.catware.model.Account[] accts = JsonUtil.convert(txt2, new TypeReference<com.catware.model.Account[]>() { });
     	AccountList accts = JsonUtil.convert(txt2.getBody(), AccountList.class);
     	System.out.println(accts);
-    	assertEquals(accts.getAccounts().size(), 2);
+    	assertEquals(accts.getAccounts().size(), 1);
     	String accid = accts.getAccounts().get(0).getBban();
-    	
-    	MyResponse txt3 = new AccountServiceImpl().getAccountDetails(consentid, accid, true);
+    	System.out.println(accid);
+    	MyResponse txt3 = new AccountServiceImpl().getAccountDetails(psuid, accid, true);
     	System.out.println(txt3);
     	AccountDetails acct = JsonUtil.convert(txt3.getBody(), AccountDetails.class);    	
     	System.out.println(acct.getBban());
     	
-    	MyResponse txt4 = new AccountServiceImpl().getBalance(consentid, accid);
+    	MyResponse txt4 = new AccountServiceImpl().getBalance(psuid, accid);
     	System.out.println(txt4);
-    	Balance balance = JsonUtil.convert(txt4.getBody(), Balance.class);    	
+    	GetAccountBalancesResponse balance = JsonUtil.convert(txt4.getBody(), GetAccountBalancesResponse.class);    	
     	System.out.println("B" + balance);
-    	System.out.println(balance.getLastComittedTransaction());
-    	
-    	MyResponse txt5 = new AccountServiceImpl().getAccountTransactions(consentid, accid);
-    	System.out.println(txt5);
+    	System.out.println(balance.getBalances().get(0).getLastComittedTransaction());
     	
     }
 
+    //@Test
+    public void transList1() throws Exception {
+    	MyResponse txt2 = new AccountServiceImpl().getAccountTransactions(psuid, "12043175449");
+    	System.out.println("translist");
+    	System.out.println(txt2);
+    }
+
+    @Test
+    public void accList2() throws Exception {
+    	MyResponse txt2 = new AccountServiceImpl().getAccount(psuid, true);
+    	System.out.println("acclist");
+    	System.out.println(txt2);
+    }
 
 }
