@@ -20,11 +20,17 @@ import com.catware.constants.DNBConstants;
 import com.catware.database.hibernate.Consent;
 import com.catware.model.AccountDetails;
 import com.catware.model.AccountList;
+import com.catware.model.AccountReference;
+import com.catware.model.AccountReport;
 import com.catware.model.Amount;
 import com.catware.model.Balance;
 import com.catware.model.GetAccountBalancesResponse;
+import com.catware.model.GetAccountTransactionsResponse;
+import com.catware.model.TppMessageGeneric;
+import com.catware.model.TransactionDetails;
 import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
+import com.catware.util.http.dnb.ErrorUtil;
 import com.catware.util.json.JsonUtil;
 
 public class AccountServiceImpl extends AccountService {
@@ -37,35 +43,34 @@ public class AccountServiceImpl extends AccountService {
 			Map<String, String> header = new LinkedHashMap<>();
 			header.put(DNBConstants.CONSENTID, consentid);
 			header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
-			MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts", Constants.GET, header, null).request();
+			MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts", null, Constants.GET, header, null).request();
 			String json = response.getBody();
 			System.out.println(json);
 			AccountList accounts = JsonUtil.convert(json, AccountList.class);
-			List<com.catware.service.model.Balance> newBalances = new ArrayList<>();
 			if (withBalance) {
 				for (AccountDetails account : accounts.getAccounts()) {
-					String bban = account.getBban();
-					MyResponse details = getBalance(psuid, bban);
-					if (details.getCode() == 200) {
-						GetAccountBalancesResponse detail = JsonUtil.convert(details.getBody(), GetAccountBalancesResponse.class);
-						List<Balance> balances = detail.getBalances();
-						for (Balance balance : balances) {
-							com.catware.service.model.Amount newAmount = new com.catware.service.model.Amount(balance.getBalanceAmount().getAmount(), balance.getBalanceAmount().getCurrency());
-							newBalances.add(new com.catware.service.model.Balance(newAmount, balance.getBalanceType(), balance.getReferenceDate()));
-						}
+					String bban = account.getBban();			
+					MyResponse balanceResponse = getBalanceInner(consentid, bban);
+					GetAccountBalancesResponse accountBalanceResponse;
+					if(balanceResponse.getCode() == 200) {
+						accountBalanceResponse = JsonUtil.convert(balanceResponse.getBody(), GetAccountBalancesResponse.class);
+					} else {
+						return ErrorUtil.getError(balanceResponse);
 					}
+					account.setBalances(accountBalanceResponse.getBalances());
 				}
 			}
 			List<com.catware.service.model.AccountDetails> newAccounts = new ArrayList<>();
 			for (AccountDetails acc : accounts.getAccounts()) {
-				com.catware.service.model.AccountDetails newAcc = new com.catware.service.model.AccountDetails(newBalances, acc.getBban(), acc.getCurrency(), acc.getName());
+				List<com.catware.service.model.Balance> newBalance = convertBalance(acc.getBalances());
+				com.catware.service.model.AccountDetails newAcc = new com.catware.service.model.AccountDetails(newBalance, acc.getBban(), acc.getCurrency(), acc.getName());
 				newAccounts.add(newAcc);
 			}
 			String newJson = JsonUtil.convert(new com.catware.service.model.AccountList(newAccounts));
 			response.setBody(newJson);
 			return response;
 		} else {
-			return new MyResponse(500, Constants.PSUWITHOUTCONSENT);
+			return ErrorUtil.getError(500, Constants.PSUWITHOUTCONSENT);
 		}
 	}
 
@@ -81,9 +86,16 @@ public class AccountServiceImpl extends AccountService {
 			header.put(DNBConstants.XREQUESTID, requestId);
 			header.put(DNBConstants.CONSENTID, consentid);
 			header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
-			return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid, Constants.GET, header, null).request();
+			MyResponse transactionResponse = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid, null, Constants.GET, header, null).request();
+			if (transactionResponse.getCode() == 200) {
+				AccountDetails details = JsonUtil.convert(transactionResponse.getBody(), AccountDetails.class);
+				String newJson = JsonUtil.convert(new com.catware.service.model.AccountDetails(convertBalance(details.getBalances()), details.getBban(), details.getCurrency(), details.getName()));
+				return new MyResponse(200, newJson);
+			} else {
+				return transactionResponse;
+			}
 		} else {
-			return new MyResponse(500, Constants.PSUWITHOUTCONSENT);
+			return ErrorUtil.getError(500, Constants.PSUWITHOUTCONSENT);
 		}
 	}
 
@@ -92,12 +104,42 @@ public class AccountServiceImpl extends AccountService {
 		Consent aConsent = Consent.find(psuid);
 		if (aConsent != null) {
 			String consentid = aConsent.getConsentid();
-			Map<String, String> header = new LinkedHashMap<>();
-			header.put(DNBConstants.CONSENTID, consentid);		
-			return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid + "/balances", Constants.GET, header, null).request();
+			MyResponse response = getBalanceInner(consentid, accid);
+			GetAccountBalancesResponse accountBalanceResponse;
+			if(response.getCode() == 200) {
+				accountBalanceResponse = JsonUtil.convert(response.getBody(), GetAccountBalancesResponse.class);
+			} else {
+				return ErrorUtil.getError(response);
+			}
+			AccountReference account = accountBalanceResponse.getAccount();
+			List<Balance> balances = accountBalanceResponse.getBalances();
+			com.catware.service.model.GetAccountBalancesResponse newBalance = new com.catware.service.model.GetAccountBalancesResponse(convertAccount(account), convertBalance(balances));
+			response.setBody(JsonUtil.convert(newBalance));
+			return response;
 		} else {
-			return new MyResponse(500, Constants.PSUWITHOUTCONSENT);
+			return ErrorUtil.getError(500, Constants.PSUWITHOUTCONSENT);
 		}
+	}
+
+	private com.catware.service.model.AccountReference convertAccount(AccountReference account) {
+		return new com.catware.service.model.AccountReference(account.getBban(), account.getCurrency());
+	}
+
+	private MyResponse getBalanceInner(String consentid, String accid) throws IOException, KeyStoreException,
+			UnrecoverableKeyException, KeyManagementException, NoSuchAlgorithmException, CertificateException {
+		Map<String, String> header = new LinkedHashMap<>();
+		header.put(DNBConstants.CONSENTID, consentid);		
+		MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid + "/balances", null, Constants.GET, header, null).request();
+		return response;
+	}
+
+	private List<com.catware.service.model.Balance> convertBalance(List<Balance> balances) {
+		List<com.catware.service.model.Balance> newBalances = new ArrayList<>();
+		for (Balance balance : balances) {
+			com.catware.service.model.Amount newAmount = new com.catware.service.model.Amount(balance.getBalanceAmount().getAmount(), balance.getBalanceAmount().getCurrency());
+			newBalances.add(new com.catware.service.model.Balance(newAmount, balance.getBalanceType(), balance.getReferenceDate()));
+		}
+		return newBalances;
 	}
 
 	@Override
@@ -108,10 +150,40 @@ public class AccountServiceImpl extends AccountService {
 			Map<String, String> header = new LinkedHashMap<>();
 			header.put(DNBConstants.CONSENTID, consentid);
 			header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
-			return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid + "/transactions", Constants.GET, header, null).request();
+			Map<String, String> queries = new HashMap<>();
+			queries.put("bookingStatus", "both");
+			MyResponse transactionResponse = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid + "/transactions", queries, Constants.GET, header, null).request();
+			if(transactionResponse.getCode() == 200) {
+				GetAccountTransactionsResponse trans = JsonUtil.convert(transactionResponse.getBody(), GetAccountTransactionsResponse.class);			
+				AccountReport report = trans.getTransactions();
+				List<TransactionDetails> bookedList = report.getBooked();
+				List<TransactionDetails> pendingList = report.getPending();
+				com.catware.service.model.AccountReport newTrans = new com.catware.service.model.AccountReport(convertTransaction(bookedList), convertTransaction(pendingList));
+				com.catware.service.model.GetAccountTransactionsResponse response = new com.catware.service.model.GetAccountTransactionsResponse(convertAccount(trans.getAccount()), newTrans);
+				transactionResponse.setBody(JsonUtil.convert(response));
+				return transactionResponse;
+			} else {
+				return ErrorUtil.getError(transactionResponse);
+			}
 		} else {
-			return new MyResponse(500, Constants.PSUWITHOUTCONSENT);
+			return ErrorUtil.getError(500, Constants.PSUWITHOUTCONSENT);
 		}
 	}
 
+	private List<com.catware.service.model.TransactionDetails> convertTransaction(
+			List<TransactionDetails> list) {
+		List<com.catware.service.model.TransactionDetails> retlist = new ArrayList<>();
+		for (TransactionDetails transaction : list) {
+			Amount amount = transaction.getTransactionAmount();
+			com.catware.service.model.Amount newAmount = new com.catware.service.model.Amount(amount.getAmount(), amount.getCurrency());
+			// enough?
+			// dnb also returns
+			// dnbTransactionDateTime
+			// dnbTransactionType
+			com.catware.service.model.TransactionDetails newTransactionDetail = new com.catware.service.model.TransactionDetails(transaction.getTransactionId(), transaction.getBookingDate(), transaction.getValueDate(), newAmount);
+			retlist.add(newTransactionDetail);
+		}
+		return retlist;
+	}
+	
 }

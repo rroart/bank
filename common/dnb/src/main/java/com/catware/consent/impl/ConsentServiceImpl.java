@@ -56,7 +56,7 @@ public class ConsentServiceImpl extends ConsentService {
 		header.put(DNBConstants.PSUID, psuid);
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		String body = getBody(60);
-		MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents", Constants.POST, header, body).request();
+		MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents", null, Constants.POST, header, body).request();
 		String json = response.getBody();
 		System.out.println(json);
 		if (response.getCode() == 201) {
@@ -76,14 +76,14 @@ public class ConsentServiceImpl extends ConsentService {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put(DNBConstants.PSUID, psuid);
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
-		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid, Constants.GET, header, null).request();
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid, null, Constants.GET, header, null).request();
 	}
 	
 	public MyResponse getStatus(String consentid, String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put(DNBConstants.PSUID, psuid);
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
-		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid + "/status", Constants.GET, header, null).request();
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid + "/status", null, Constants.GET, header, null).request();
 	}
 	
 	public String getBody(int validDays) {
@@ -102,7 +102,7 @@ public class ConsentServiceImpl extends ConsentService {
 		createConsent.setValidUntil(date);
 		String jsonInputString = "{\n" + 
 				"    \"validUntil\": \"" + dateString + "\",\n" + 
-				"    \"frequencyPerDay\": 3,\n" + 
+				"    \"frequencyPerDay\": 300,\n" + 
 				"    \"access\": {\n" + 
 				"        \"balances\": [],\n" + 
 				"        \"accounts\": [],\n" + 

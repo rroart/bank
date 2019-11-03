@@ -24,7 +24,7 @@ public class PaymentServiceImpl extends PaymentService {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put("PSU-IP-Address", "");
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
-		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/payments/approval", Constants.GET, header, null).request();
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/payments/approval", null, Constants.GET, header, null).request();
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class PaymentServiceImpl extends PaymentService {
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		PaymentInitiationNorwayPostRequest paymentInitiation = new PaymentInitiationNorwayPostRequest();
 		String body = JsonUtil.convert(paymentInitiation);
-		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "https://sandboxapi.psd.dnb.no/v1/payments/norwegian-domestic-credit-transfers", Constants.POST, header, body).request();
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "https://sandboxapi.psd.dnb.no/v1/payments/norwegian-domestic-credit-transfers", null, Constants.POST, header, body).request();
 	}
 
 	@Override
