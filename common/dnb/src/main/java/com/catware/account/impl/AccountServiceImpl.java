@@ -42,7 +42,7 @@ public class AccountServiceImpl extends AccountService {
 			String consentid = aConsent.getConsentid();
 			Map<String, String> header = new LinkedHashMap<>();
 			header.put(DNBConstants.CONSENTID, consentid);
-			header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+			header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
 			MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts", null, Constants.GET, header, null).request();
 			String json = response.getBody();
 			System.out.println(json);
@@ -63,7 +63,9 @@ public class AccountServiceImpl extends AccountService {
 			List<com.catware.service.model.AccountDetails> newAccounts = new ArrayList<>();
 			for (AccountDetails acc : accounts.getAccounts()) {
 				List<com.catware.service.model.Balance> newBalance = convertBalance(acc.getBalances());
-				com.catware.service.model.AccountDetails newAcc = new com.catware.service.model.AccountDetails(newBalance, acc.getBban(), acc.getCurrency(), acc.getName());
+				String authorisedBalance = getBalance(acc.getBalances(), "authorised");
+				String openingBookedBalance = getBalance(acc.getBalances(), "openingBooked");
+				com.catware.service.model.AccountDetails newAcc = new com.catware.service.model.AccountDetails(authorisedBalance, newBalance, acc.getBban(), acc.getCurrency(), acc.getName(), openingBookedBalance);
 				newAccounts.add(newAcc);
 			}
 			String newJson = JsonUtil.convert(new com.catware.service.model.AccountList(newAccounts));
@@ -72,6 +74,15 @@ public class AccountServiceImpl extends AccountService {
 		} else {
 			return ErrorUtil.getError(500, Constants.PSUWITHOUTCONSENT);
 		}
+	}
+
+	private String getBalance(List<Balance> balances, String balanceType) {
+		for (Balance balance : balances) {
+			if (balance.getBalanceType().equals(balanceType)) {
+				return balance.getBalanceAmount().getAmount();
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -85,11 +96,11 @@ public class AccountServiceImpl extends AccountService {
 			header.put(DNBConstants.ACCEPT, "application/json");
 			header.put(DNBConstants.XREQUESTID, requestId);
 			header.put(DNBConstants.CONSENTID, consentid);
-			header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+			header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
 			MyResponse transactionResponse = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid, null, Constants.GET, header, null).request();
 			if (transactionResponse.getCode() == 200) {
 				AccountDetails details = JsonUtil.convert(transactionResponse.getBody(), AccountDetails.class);
-				String newJson = JsonUtil.convert(new com.catware.service.model.AccountDetails(convertBalance(details.getBalances()), details.getBban(), details.getCurrency(), details.getName()));
+				String newJson = JsonUtil.convert(new com.catware.service.model.AccountDetails(null, convertBalance(details.getBalances()), details.getBban(), details.getCurrency(), details.getName(), null));
 				return new MyResponse(200, newJson);
 			} else {
 				return transactionResponse;
@@ -149,7 +160,7 @@ public class AccountServiceImpl extends AccountService {
 			String consentid = aConsent.getConsentid();
 			Map<String, String> header = new LinkedHashMap<>();
 			header.put(DNBConstants.CONSENTID, consentid);
-			header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+			header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
 			Map<String, String> queries = new HashMap<>();
 			queries.put("bookingStatus", "both");
 			MyResponse transactionResponse = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid + "/transactions", queries, Constants.GET, header, null).request();

@@ -3,6 +3,8 @@ package com.catware.service.model;
 import java.util.List;
 
 public class AccountDetails {
+	private String authorisedBalance;
+
 	private List<Balance> balances;
 
 	private String bban;
@@ -15,20 +17,32 @@ public class AccountDetails {
 	
 	private String name;
 	
+	private String openingBookedBalance;
+	
 	private String status;
 	
 	private String usage;
-	
+
 	public AccountDetails() {
 		super();
 	}
 
-	public AccountDetails(List<Balance> balances, String bban, String currency, String name) {
+	public AccountDetails(String authorisedBalance, List<Balance> balances, String bban, String currency, String name, String openingBookedBalance) {
 		super();
+		this.authorisedBalance = authorisedBalance;
 		this.balances = balances;
 		this.bban = bban;
 		this.currency = currency;
 		this.name = name;
+		this.openingBookedBalance = openingBookedBalance;
+	}
+
+	public String getAuthorisedBalance() {
+		return authorisedBalance;
+	}
+
+	public void setAuthorisedBalance(String authorisedBalance) {
+		this.authorisedBalance = authorisedBalance;
 	}
 
 	public List<Balance> getBalances() {
@@ -77,6 +91,14 @@ public class AccountDetails {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getOpeningBookedBalance() {
+		return openingBookedBalance;
+	}
+
+	public void setOpeningBookedBalance(String openingBookedBalance) {
+		this.openingBookedBalance = openingBookedBalance;
 	}
 
 	public String getStatus() {
