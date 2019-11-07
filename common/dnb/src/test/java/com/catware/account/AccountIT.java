@@ -101,14 +101,14 @@ public class AccountIT {
     	
     }
 
-    //@Test
+    @Test
     public void transList1() throws Exception {
     	MyResponse txt2 = new AccountServiceImpl().getAccountTransactions(psuid, "12043175449");
     	System.out.println("translist");
     	System.out.println(txt2);
     }
 
-    @Test
+    //@Test
     public void accList2() throws Exception {
     	MyResponse txt2 = new AccountServiceImpl().getAccount(psuid, true);
     	System.out.println("acclist");
