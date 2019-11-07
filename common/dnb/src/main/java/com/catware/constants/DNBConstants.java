@@ -17,4 +17,6 @@ public class DNBConstants {
 	public static final String XREQUESTID = "X-Request-ID";
 
 	public static final String SCAREDIRECT = "scaRedirect";
+
+	public static final String DNBREDIRECT = "http://localhost:3083";
 }
