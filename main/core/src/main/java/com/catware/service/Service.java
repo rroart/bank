@@ -78,6 +78,14 @@ public class Service implements CommandLineRunner {
 		return response;
     }
 
+	@GetMapping(path = "/accounts/{bank}/{psuid}/{accid}/transactions")
+    public MyResponse getAccountTransactions(@PathVariable("bank") String bank, @PathVariable("psuid") String psuid, @PathVariable("accid") String accid) throws Exception {
+		AccountService service = new ServiceFactory().getAccountService(bank);
+		MyResponse response = service.getAccountTransactions(psuid, accid);
+		System.out.println(response);
+		return response;
+    }
+
 	@PostMapping(path = "/accounts/pay")
     public String addMemberV1(@RequestBody Customer c) {
 		System.out.println("strx");
