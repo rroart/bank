@@ -8,12 +8,13 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import com.catware.util.http.MyResponse;
+import com.catware.service.model.PaymentInitiationNorwayPostRequest;
 
 public abstract class PaymentService {
 
 	public abstract MyResponse getPaymentsToApprove() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 	
-	public abstract MyResponse initiateNorwegianDomesticCreditTransfer(String psuid, String debtorAccount, String creditorAccount, String creditorName, String instructedAmount) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
+	public abstract MyResponse initiateNorwegianDomesticCreditTransfer(PaymentInitiationNorwayPostRequest payment) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
 	
 	public abstract MyResponse initiateNorwegianDomesticCreditTransferToSelf(String psuid, String debtorAccount, String creditorAccount, String instructedAmount);
 	

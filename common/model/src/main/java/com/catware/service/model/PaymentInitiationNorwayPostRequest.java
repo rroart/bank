@@ -1,9 +1,13 @@
-package com.catware.model;
+package com.catware.service.model;
 
 import java.time.LocalDate;
 
 public class PaymentInitiationNorwayPostRequest {
 
+	private String bank;
+	
+	private String psuid;
+	
 	private AccountReference creditorAccount;
 	
 	private Address creditorAddress;
@@ -32,6 +36,22 @@ public class PaymentInitiationNorwayPostRequest {
 
 	public PaymentInitiationNorwayPostRequest() {
 		super();
+	}
+
+	public String getBank() {
+		return bank;
+	}
+
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+
+	public String getPsuid() {
+		return psuid;
+	}
+
+	public void setPsuid(String psuid) {
+		this.psuid = psuid;
 	}
 
 	public AccountReference getCreditorAccount() {

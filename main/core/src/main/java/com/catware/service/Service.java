@@ -4,6 +4,8 @@ import com.catware.http.Customer;
 import com.catware.factory.ServiceFactory;
 import com.catware.account.AccountService;
 import com.catware.consent.ConsentService;
+import com.catware.payment.PaymentService;
+import com.catware.service.model.PaymentInitiationNorwayPostRequest;
 import java.security.UnrecoverableKeyException;
 import java.security.KeyManagementException;
 import org.slf4j.Logger;
@@ -87,9 +89,11 @@ public class Service implements CommandLineRunner {
     }
 
 	@PostMapping(path = "/accounts/pay")
-    public String addMemberV1(@RequestBody Customer c) {
-		System.out.println("strx");
-        return "helloworld";
+    public MyResponse postPay(@RequestBody PaymentInitiationNorwayPostRequest payment) throws Exception {
+		PaymentService service = new ServiceFactory().getPaymentService(payment.getBank());
+		MyResponse response = service.initiateNorwegianDomesticCreditTransfer(payment);
+		System.out.println(response);
+		return response;
     }
 	
 	public ResponseEntity aResponse(MyResponse response) {

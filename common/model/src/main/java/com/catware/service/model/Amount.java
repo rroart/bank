@@ -5,6 +5,10 @@ public class Amount {
 	
 	private String currency;
 
+	public Amount() {
+		super();
+	}
+
 	public Amount(String amount, String currency) {
 		super();
 		this.amount = amount;
