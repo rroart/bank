@@ -44,6 +44,9 @@ public class AccountServiceImpl extends AccountService {
 			header.put(DNBConstants.CONSENTID, consentid);
 			header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
 			MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts", null, Constants.GET, header, null).request();
+			if (response.getCode() != 200) {
+				return ErrorUtil.getError(response);
+			}
 			String json = response.getBody();
 			System.out.println(json);
 			AccountList accounts = JsonUtil.convert(json, AccountList.class);
