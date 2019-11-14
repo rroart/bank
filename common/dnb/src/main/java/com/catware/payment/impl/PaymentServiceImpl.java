@@ -6,7 +6,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.catware.payment.PaymentService;
@@ -18,8 +20,12 @@ import com.catware.model.HrefType;
 import com.catware.model.LinksPaymentInitiation;
 import com.catware.model.PaymentInitiationNorwayPostRequest;
 import com.catware.model.PaymentInitiationPostResponse;
+import com.catware.model.SigningBasketAuthorisationInitiationResponse;
+import com.catware.model.SigningBasketRequest;
+import com.catware.model.SigningBasketResponse201;
 import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
+import com.catware.util.http.dnb.ErrorUtil;
 import com.catware.util.json.JsonUtil;
 
 public class PaymentServiceImpl extends PaymentService {
@@ -35,6 +41,12 @@ public class PaymentServiceImpl extends PaymentService {
 	@Override
 	public MyResponse initiateNorwegianDomesticCreditTransfer(com.catware.service.model.PaymentInitiationNorwayPostRequest payment) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
+		return aDomesticCreditTransfer(payment, header);
+	}
+
+	private MyResponse aDomesticCreditTransfer(com.catware.service.model.PaymentInitiationNorwayPostRequest payment, Map<String, String> header)
+			throws IOException, KeyStoreException, UnrecoverableKeyException, KeyManagementException,
+			NoSuchAlgorithmException, CertificateException {
 		header.put(DNBConstants.PSUID, payment.getPsuid());
 		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
 		PaymentInitiationNorwayPostRequest paymentInitiation = new PaymentInitiationNorwayPostRequest();
@@ -54,6 +66,51 @@ public class PaymentServiceImpl extends PaymentService {
 		return paymentResponse;
 	}
 
+	@Override
+	public MyResponse initiateNorwegianDomesticCreditTransfers(com.catware.service.model.PaymentInitiationNorwayPostRequests payments) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		List<String> paymentIds = new ArrayList<>();
+		for (com.catware.service.model.PaymentInitiationNorwayPostRequest payment : payments.getPayments()) {
+			Map<String, String> header = new LinkedHashMap<>();
+			// needed for signing basket
+			header.put(DNBConstants.TPPEXPLICITAUTHORISATIONPREFERRED, "true");
+			MyResponse aPaymentResponse = aDomesticCreditTransfer(payment, header);
+			if (aPaymentResponse.getCode() == 201) {
+				PaymentInitiationPostResponse response = JsonUtil.convert(aPaymentResponse.getBody(), PaymentInitiationPostResponse.class);
+				String paymentId = response.getPaymentId();
+				paymentIds.add(paymentId);
+			} else {
+				return ErrorUtil.getError(aPaymentResponse);
+			}
+		}
+		String psuid = payments.getPayments().get(0).getPsuid();
+		MyResponse aResponse = initiateNewSigningBasket(psuid, paymentIds);
+		if (aResponse.getCode() == 201) {
+			SigningBasketResponse201 response = JsonUtil.convert(aResponse.getBody(), SigningBasketResponse201.class);
+			String basketId = response.getBasketId();
+			MyResponse aNewResponse = startSigningBasket(basketId, psuid);
+			if (aNewResponse.getCode() == 200) {
+				SigningBasketAuthorisationInitiationResponse authResponse = JsonUtil.convert(aNewResponse.getBody(), SigningBasketAuthorisationInitiationResponse.class);
+				return aNewResponse;
+			} else {
+				return ErrorUtil.getError(aResponse);
+			}
+		} else {
+			return ErrorUtil.getError(aResponse);
+		}
+	}
+
+	private MyResponse initiateNewSigningBasket(String psuid, List<String> paymentIds) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		Map<String, String> header = new LinkedHashMap<>();
+		header.put("PSU-IP-Address", "");
+		header.put(DNBConstants.PSUID, psuid);
+		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+		header.put(DNBConstants.TPPEXPLICITAUTHORISATIONPREFERRED, "true");
+		SigningBasketRequest request = new SigningBasketRequest();
+		request.setPaymentIds(paymentIds);
+		String body = JsonUtil.convert(request);
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/signing-baskets", null, Constants.POST, header, body).request();		
+	}
+	
 	private com.catware.service.model.PaymentInitiationPostResponse convert(PaymentInitiationPostResponse response) {
 		return new com.catware.service.model.PaymentInitiationPostResponse(response.getPaymentId(), convert(response.get_links()));
 	}
@@ -63,6 +120,9 @@ public class PaymentServiceImpl extends PaymentService {
 	}
 
 	private com.catware.service.model.HrefType convert(HrefType href) {
+		if (href == null) {
+			return null;
+		}
 		return new com.catware.service.model.HrefType(href.getHref());
 	}
 
@@ -98,9 +158,12 @@ public class PaymentServiceImpl extends PaymentService {
 	}
 
 	@Override
-	public MyResponse startSigninngBasket(String basketid, String psuid) {
-		// TODO Auto-generated method stub
-		return null;
+	public MyResponse startSigningBasket(String basketid, String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		Map<String, String> header = new LinkedHashMap<>();
+		header.put("PSU-IP-Address", "");
+		header.put(DNBConstants.PSUID, psuid);
+		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/signing-baskets/" + basketid + "/authorisations", null, Constants.POST, header, "").request();		
 	}
 
 	@Override
