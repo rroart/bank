@@ -6,12 +6,16 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.catware.payment.PaymentService;
+import com.catware.model.LinksConsents;
 import com.catware.constants.Constants;
 import com.catware.constants.DNBConstants;
 import com.catware.model.AccountReference;
@@ -54,6 +58,7 @@ public class PaymentServiceImpl extends PaymentService {
 		paymentInitiation.setCreditorName(payment.getCreditorName());
 		paymentInitiation.setDebtorAccount(convert(payment.getDebtorAccount()));
 		paymentInitiation.setInstructedAmount(convert(payment.getInstructedAmount()));
+		paymentInitiation.setRequestedExecutionDate(convert(payment.getRequestedExecutionDate()));
 		String body = JsonUtil.convert(paymentInitiation);
 		System.out.println("body" + body);
 		MyResponse paymentResponse = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/payments/norwegian-domestic-credit-transfers", null, Constants.POST, header, body).request();
@@ -64,6 +69,13 @@ public class PaymentServiceImpl extends PaymentService {
 			paymentResponse.setBody(newJson);
 		}
 		return paymentResponse;
+	}
+
+	private LocalDate convert(Date date) {
+		if (date == null) {
+			return null;
+		}
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
 	@Override
@@ -90,6 +102,8 @@ public class PaymentServiceImpl extends PaymentService {
 			MyResponse aNewResponse = startSigningBasket(basketId, psuid);
 			if (aNewResponse.getCode() == 200) {
 				SigningBasketAuthorisationInitiationResponse authResponse = JsonUtil.convert(aNewResponse.getBody(), SigningBasketAuthorisationInitiationResponse.class);
+				String newJson = JsonUtil.convert(convert(authResponse));
+				aNewResponse.setBody(newJson);
 				return aNewResponse;
 			} else {
 				return ErrorUtil.getError(aResponse);
@@ -97,6 +111,14 @@ public class PaymentServiceImpl extends PaymentService {
 		} else {
 			return ErrorUtil.getError(aResponse);
 		}
+	}
+
+	private com.catware.service.model.SigningBasketAuthorisationInitiationResponse convert(SigningBasketAuthorisationInitiationResponse authResponse) {
+		return new com.catware.service.model.SigningBasketAuthorisationInitiationResponse(convert(authResponse.get_links()), authResponse.getAuthorisationId(), authResponse.getScaStatus());
+	}
+
+	private com.catware.service.model.LinksConsents convert(LinksConsents links) {
+		return new com.catware.service.model.LinksConsents(convert(links.getScaRedirect()), convert(links.getScaStatus()));
 	}
 
 	private MyResponse initiateNewSigningBasket(String psuid, List<String> paymentIds) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {

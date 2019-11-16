@@ -1,6 +1,8 @@
 package com.catware.service.model;
 
-import java.time.LocalDate;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class PaymentInitiationNorwayPostRequest {
 
@@ -28,7 +30,9 @@ public class PaymentInitiationNorwayPostRequest {
 	
 	private String remittanceInformationUnstructured;
 	
-	private LocalDate requestedExecutionDate;	
+	@JsonFormat
+    (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date requestedExecutionDate;	
 	
 	private String ultimateCreditor;
 	
@@ -134,11 +138,11 @@ public class PaymentInitiationNorwayPostRequest {
 		this.remittanceInformationUnstructured = remittanceInformationUnstructured;
 	}
 
-	public LocalDate getRequestedExecutionDate() {
+	public Date getRequestedExecutionDate() {
 		return requestedExecutionDate;
 	}
 
-	public void setRequestedExecutionDate(LocalDate requestedExecutionDate) {
+	public void setRequestedExecutionDate(Date requestedExecutionDate) {
 		this.requestedExecutionDate = requestedExecutionDate;
 	}
 
