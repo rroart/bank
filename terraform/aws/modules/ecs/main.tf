@@ -36,6 +36,10 @@ data "template_file" "bankcore_task" {
     image           = aws_ecr_repository.catwarebank_app.repository_url
     #secret_key_base = var.secret_key_base
     log_group       = aws_cloudwatch_log_group.catwarebank.name
+    fargate_cpu    = var.fargate_cpu
+    fargate_memory = var.fargate_memory
+    aws_region     = var.aws_region
+    app_port       = var.app_port
   }
 }
 
@@ -46,6 +50,10 @@ data "template_file" "web_task" {
     image           = aws_ecr_repository.catwarebank_app.repository_url
     #secret_key_base = var.secret_key_base
     log_group       = aws_cloudwatch_log_group.catwarebank.name
+    fargate_cpu    = var.fargate_cpu
+    fargate_memory = var.fargate_memory
+    aws_region     = var.aws_region
+    app_port       = var.app_port
   }
 }
 
@@ -68,6 +76,10 @@ data "template_file" "bankcore_app_task" {
     image           = "${aws_ecr_repository.catwarebank_app.repository_url}"
     #secret_key_base = "${var.secret_key_base}"
     log_group       = "catwarebank"
+    fargate_cpu    = var.fargate_cpu
+    fargate_memory = var.fargate_memory
+    aws_region     = var.aws_region
+    app_port       = var.app_port
   }
 }
 
