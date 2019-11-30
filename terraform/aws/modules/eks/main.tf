@@ -108,7 +108,7 @@ resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
 
 resource "aws_eks_cluster" "demo" {
   name            = "var.cluster-name"
-  role_arn        = "${aws_iam_role.demo-node.arn}"
+  role_arn        = aws_iam_role.demo-node.arn
 
   vpc_config {
     security_group_ids = ["${aws_security_group.demo-cluster.id}"]
@@ -138,22 +138,22 @@ data "aws_iam_policy_document" "kubectl_assume_role_policy" {
 
 resource "aws_iam_role" "eks_kubectl_role" {
   name               = "example-kubectl-access-role"
-  assume_role_policy = "${data.aws_iam_policy_document.kubectl_assume_role_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.kubectl_assume_role_policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kubectl-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = "${aws_iam_role.eks_kubectl_role.name}"
+  role       = "aws_iam_role.eks_kubectl_role.name"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kubectl-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = "${aws_iam_role.eks_kubectl_role.name}"
+  role       = "aws_iam_role.eks_kubectl_role.name"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kubectl-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = "${aws_iam_role.eks_kubectl_role.name}"
+  role       = "aws_iam_role.eks_kubectl_role.name"
 }
 
 # for automating inside terraform
@@ -163,9 +163,9 @@ data "aws_eks_cluster_auth" "cluster_auth" {
 }
 
 provider "kubernetes" {
-  host                   = "${aws_eks_cluster.my_cluster.endpoint}"
-  cluster_ca_certificate = "${base64decode(aws_eks_cluster.my_cluster.certificate_authority.0.data)}"
-  token                  = "${data.aws_eks_cluster_auth.cluster_auth.token}"
+  host                   = "aws_eks_cluster.my_cluster.endpoint"
+  cluster_ca_certificate = "base64decode(aws_eks_cluster.my_cluster.certificate_authority.0.data)"
+  token                  = "data.aws_eks_cluster_auth.cluster_auth.token"
   load_config_file       = false
 }
 
