@@ -68,18 +68,18 @@ POLICY
 
 resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = "aws_iam_role.demo-node.name"
+  role       = aws_iam_role.demo-node.name
 }
 
 resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = "aws_iam_role.demo-node.name"
+  role       = aws_iam_role.demo-node.name
 }
 
 resource "aws_security_group" "demo-cluster" {
   name        = "terraform-eks-demo-cluster"
   description = "Cluster communication with worker nodes"
-  vpc_id      = "aws_vpc.demo.id"
+  vpc_id      = aws_vpc.demo.id
 
   egress {
     from_port   = 0
@@ -101,13 +101,13 @@ resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
   description       = "Allow workstation to communicate with the cluster API Server"
   from_port         = 443
   protocol          = "tcp"
-  security_group_id = "aws_security_group.demo-cluster.id"
+  security_group_id = aws_security_group.demo-cluster.id
   to_port           = 443
   type              = "ingress"
 }
 
 resource "aws_eks_cluster" "demo" {
-  name            = "var.cluster-name"
+  name            = var.cluster-name
   role_arn        = aws_iam_role.demo-node.arn
 
   vpc_config {
@@ -143,17 +143,17 @@ resource "aws_iam_role" "eks_kubectl_role" {
 
 resource "aws_iam_role_policy_attachment" "eks_kubectl-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = "aws_iam_role.eks_kubectl_role.name"
+  role       = aws_iam_role.eks_kubectl_role.name
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kubectl-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = "aws_iam_role.eks_kubectl_role.name"
+  role       = aws_iam_role.eks_kubectl_role.name
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kubectl-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = "aws_iam_role.eks_kubectl_role.name"
+  role       = aws_iam_role.eks_kubectl_role.name
 }
 
 # for automating inside terraform
