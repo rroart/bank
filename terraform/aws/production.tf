@@ -34,3 +34,11 @@ module "ecs" {
   secret_key_base     = "${var.production_secret_key_base}"
 }
 
+module "eks" {
+  source             = "./modules/eks"
+  #cluster_name = "${var.region}"
+    #subnets      = "${var.subnets}"
+  #environment        = "production"
+  #vpc_id             = module.net.vpc_id
+}
+
