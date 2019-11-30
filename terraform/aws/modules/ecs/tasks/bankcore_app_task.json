@@ -1,7 +1,7 @@
 [
   {
     "name": "bankcore-app",
-    "image": "${app_image}",
+    "image": "${image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},
     "networkMode": "awsvpc",
