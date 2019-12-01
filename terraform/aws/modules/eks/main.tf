@@ -159,13 +159,13 @@ resource "aws_iam_role_policy_attachment" "eks_kubectl-AmazonEKSWorkerNodePolicy
 # for automating inside terraform
 
 data "aws_eks_cluster_auth" "cluster_auth" {
-  name = "var.cluster-name"
+  name = var.cluster-name
 }
 
 provider "kubernetes" {
-  host                   = "aws_eks_cluster.my_cluster.endpoint"
-  cluster_ca_certificate = "base64decode(aws_eks_cluster.my_cluster.certificate_authority.0.data)"
-  token                  = "data.aws_eks_cluster_auth.cluster_auth.token"
+  host                   = aws_eks_cluster.demo.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.demo.certificate_authority.0.data)
+  token                  = data.aws_eks_cluster_auth.cluster_auth.token
   load_config_file       = false
 }
 
