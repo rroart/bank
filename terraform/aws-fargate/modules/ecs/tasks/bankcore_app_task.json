@@ -1,6 +1,6 @@
 [
   {
-    "name": "bankcore-app",
+    "name": "core",
     "image": "${image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},
@@ -8,9 +8,9 @@
     "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/bankcore-app",
+          "awslogs-group": "${log_group}",
           "awslogs-region": "${aws_region}",
-          "awslogs-stream-prefix": "ecs"
+          "awslogs-stream-prefix": "core"
         }
     },
     "portMappings": [
