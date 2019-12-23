@@ -1,3 +1,11 @@
+resource "aws_secretsmanager_secret" "bankkey" {
+  name = "bankkey"
+}
+
+resource "aws_secretsmanager_secret" "password" {
+  name = "password"
+}
+
 resource "aws_s3_bucket" "source-bank" {
   bucket        = "catware-source"
   acl           = "private"
@@ -90,6 +98,8 @@ data "template_file" "buildspeccore" {
     cluster_name       = var.ecs_cluster_name
     subnet_id          = var.run_task_subnet_id
     security_group_ids = join(",", var.run_task_security_group_ids)
+    password 	       = aws_secretsmanager_secret.password.id
+    keyfile	       = aws_secretsmanager_secret.bankkey.id
   }
 }
 
