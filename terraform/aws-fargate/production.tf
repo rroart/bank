@@ -27,9 +27,14 @@ module "ecs" {
   environment        = "production"
   vpc_id             = module.net.vpc_id
   availability_zones = local.production_availability_zones
-  repository_name    = "catwarebank/production"
+  repository_name_core = "catwarebank/production"
+  repository_name_web = "catwareweb/production"
   subnets_ids        = flatten(module.net.private_subnets_id)
   public_subnet_ids  =  flatten([ module.net.public_subnets_id ])
   security_groups_ids = module.net.security_groups_ids
   secret_key_base     = "${var.production_secret_key_base}"
+}
+
+module "secret" {
+  source             = "./modules/secret"
 }

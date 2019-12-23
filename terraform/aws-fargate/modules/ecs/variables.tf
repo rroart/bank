@@ -26,7 +26,11 @@ variable "public_subnet_ids" {
   description = "The private subnets to use"
 }
 
-variable "repository_name" {
+variable "repository_name_core" {
+  description = "The name of the repisitory"
+}
+
+variable "repository_name_web" {
   description = "The name of the repisitory"
 }
 
@@ -51,5 +55,5 @@ variable "aws_region" {
 
 variable "app_port" {
   description = "Port exposed by the docker image to redirect traffic to"
-  default     = 3000
+  default     = 8080
 }

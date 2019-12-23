@@ -1,5 +1,9 @@
-output "repository_url" {
-  value = aws_ecr_repository.catwarebank_app.repository_url
+output "repository_url_core" {
+  value = aws_ecr_repository.catwarebank_app_core.repository_url
+}
+
+output "repository_url_web" {
+  value = aws_ecr_repository.catwarebank_app_web.repository_url
 }
 
 output "cluster_name" {

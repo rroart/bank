@@ -13,8 +13,12 @@ resource "aws_cloudwatch_log_group" "catwarebank" {
 /*====
 ECR repository to store our Docker images
 ======*/
-resource "aws_ecr_repository" "catwarebank_app" {
-  name = var.repository_name
+resource "aws_ecr_repository" "catwarebank_app_core" {
+  name = var.repository_name_core
+}
+
+resource "aws_ecr_repository" "catwarebank_app_web" {
+  name = var.repository_name_web
 }
 
 /*====
@@ -33,7 +37,7 @@ data "template_file" "bankcore_task" {
   template = file("${path.module}/tasks/bankcore_app_task.json")
 
   vars = {
-    image           = aws_ecr_repository.catwarebank_app.repository_url
+    image           = aws_ecr_repository.catwarebank_app_core.repository_url
     #secret_key_base = var.secret_key_base
     log_group       = aws_cloudwatch_log_group.catwarebank.name
     fargate_cpu    = var.fargate_cpu
@@ -47,7 +51,7 @@ data "template_file" "web_task" {
   template = file("${path.module}/tasks/web_task_definition.json")
 
   vars = {
-    image           = aws_ecr_repository.catwarebank_app.repository_url
+    image           = aws_ecr_repository.catwarebank_app_web.repository_url
     #secret_key_base = var.secret_key_base
     log_group       = aws_cloudwatch_log_group.catwarebank.name
     fargate_cpu    = var.fargate_cpu
@@ -68,24 +72,9 @@ resource "aws_ecs_task_definition" "web" {
   task_role_arn            = aws_iam_role.ecs_execution_role.arn
 }
 
-/* the task definition for the db migration */
-data "template_file" "bankcore_app_task" {
-  template = file("${path.module}/tasks/bankcore_app_task.json")
-
-  vars = {
-    image           = "${aws_ecr_repository.catwarebank_app.repository_url}"
-    #secret_key_base = "${var.secret_key_base}"
-    log_group       = "catwarebank"
-    fargate_cpu    = var.fargate_cpu
-    fargate_memory = var.fargate_memory
-    aws_region     = var.aws_region
-    app_port       = var.app_port
-  }
-}
-
-resource "aws_ecs_task_definition" "bankcore_app" {
-  family                   = "${var.environment}_bankcore_app"
-  container_definitions    = data.template_file.bankcore_app_task.rendered
+resource "aws_ecs_task_definition" "core" {
+  family                   = "${var.environment}_core"
+  container_definitions    = data.template_file.bankcore_task.rendered
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "256"
