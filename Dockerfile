@@ -5,7 +5,7 @@ RUN mkdir /app
 WORKDIR /app
 COPY . .
 RUN mvn install
-ADD main/core/target/catwarebank-main-core-0.1-SNAPSHOT.jar /usr/local/bin
+RUN cp -p main/core/target/catwarebank-main-core-0.1-SNAPSHOT.jar /usr/local/bin
 WORKDIR /usr/local/bin
 RUN ln -s /tmp /usr/local/logs
 USER root
