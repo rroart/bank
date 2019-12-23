@@ -33,7 +33,7 @@ ECS task definitions
 ======*/
 
 /* the task definition for the web service */
-data "template_file" "bankcore_task" {
+data "template_file" "core_task" {
   template = file("${path.module}/tasks/bankcore_app_task.json")
 
   vars = {
@@ -43,7 +43,7 @@ data "template_file" "bankcore_task" {
     fargate_cpu    = var.fargate_cpu
     fargate_memory = var.fargate_memory
     aws_region     = var.aws_region
-    app_port       = var.app_port
+    app_port       = 8080
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_ecs_task_definition" "web" {
 
 resource "aws_ecs_task_definition" "core" {
   family                   = "${var.environment}_core"
-  container_definitions    = data.template_file.bankcore_task.rendered
+  container_definitions    = data.template_file.core_task.rendered
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "256"
@@ -249,6 +249,11 @@ data "aws_ecs_task_definition" "web" {
   depends_on      = [aws_ecs_task_definition.web]
 }
 
+data "aws_ecs_task_definition" "core" {
+  task_definition = aws_ecs_task_definition.core.family
+  depends_on      = [aws_ecs_task_definition.core]
+}
+
 resource "aws_ecs_service" "web" {
   name = "${var.environment}-web"
   task_definition = "${aws_ecs_task_definition.web.family}:${max(
@@ -269,6 +274,30 @@ resource "aws_ecs_service" "web" {
     target_group_arn = aws_alb_target_group.alb_target_group.arn
     container_name   = "web"
     container_port   = "80"
+  }
+  #depends_on = ["aws_alb_target_group.alb_target_group"]
+}
+
+resource "aws_ecs_service" "core" {
+  name = "${var.environment}-core"
+  task_definition = "${aws_ecs_task_definition.core.family}:${max(
+    aws_ecs_task_definition.core.revision,
+    data.aws_ecs_task_definition.core.revision,
+  )}"
+  desired_count = 2
+  launch_type   = "FARGATE"
+  cluster       = aws_ecs_cluster.cluster.id
+  depends_on    = [aws_iam_role_policy.ecs_service_role_policy, aws_alb_target_group.alb_target_group]
+
+  network_configuration {
+    security_groups = flatten([ var.security_groups_ids, aws_security_group.ecs_service.id ])
+    subnets         = var.subnets_ids
+  }
+
+  load_balancer {
+    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    container_name   = "core"
+    container_port   = "8080"
   }
   #depends_on = ["aws_alb_target_group.alb_target_group"]
 }
