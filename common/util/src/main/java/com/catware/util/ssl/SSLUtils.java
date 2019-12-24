@@ -42,20 +42,20 @@ public class SSLUtils {
 	    //String text = getString(fis0);
 	    //System.out.println("text" + text.length());
 		byte[] keyfile = (byte[]) map.get("keyfile");
-		System.out.println("kf" + keyfile.length);
+		//System.out.println("kf" + keyfile.length);
 		//System.out.println(keyfile.equals(text));
 		
-		FileOutputStream outputStream = new FileOutputStream("/tmp/private0.p12");
-	    byte[] strToBytes = keyfile;
-	    outputStream.write(strToBytes);	 
-	    outputStream.close();
-	    outputStream.flush();
-	    System.out.println("written" + strToBytes.length);
-	    Files.write(Paths.get("/tmp/private.p12"), strToBytes);
-	    System.out.println("written" + strToBytes.length);
+		//FileOutputStream outputStream = new FileOutputStream("/tmp/private0.p12");
+	    //byte[] strToBytes = keyfile;
+	    //outputStream.write(strToBytes);	 
+	    //outputStream.close();
+	    //outputStream.flush();
+	    //System.out.println("written" + strToBytes.length);
+	    //Files.write(Paths.get("/tmp/private.p12"), strToBytes);
+	    //System.out.println("written" + strToBytes.length);
 	    
-		FileOutputStream fos = new FileOutputStream("/tmp/private.p12");
-		keyStore.store(fos, password.toCharArray());
+		//FileOutputStream fos = new FileOutputStream("/tmp/private.p12");
+		//keyStore.store(fos, password.toCharArray());
 		//fis0 = new ByteArrayInputStream(keyfile.getBytes());		 
 		//text = getString(fis0);
 		//System.out.println(keyfile.equals(text));
