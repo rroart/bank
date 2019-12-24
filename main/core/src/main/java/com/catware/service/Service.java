@@ -64,6 +64,12 @@ public class Service implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws InterruptedException, IOException {        
+		if (System.getProperty("password") == null) {
+			System.out.println("No password property set");
+		}
+		if (System.getProperty("keyfile") == null) {
+			System.out.println("No keyfile property set");
+		}
 	}
 
 	@PostMapping(path = "/consents")
