@@ -34,7 +34,3 @@ module "ecs" {
   security_groups_ids = module.net.security_groups_ids
   secret_key_base     = "${var.production_secret_key_base}"
 }
-
-module "secret" {
-  source             = "./modules/secret"
-}
