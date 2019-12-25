@@ -118,6 +118,13 @@ resource "aws_security_group" "web_inbound_sg" {
   }
 
   ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port   = 8
     to_port     = 0
     protocol    = "icmp"
@@ -147,9 +154,21 @@ resource "aws_alb" "alb_catwarebank" {
   }
 }
 
-resource "aws_alb_listener" "catwarebank" {
+resource "aws_alb_listener" "catwarebankweb" {
   load_balancer_arn = aws_alb.alb_catwarebank.arn
   port              = "80"
+  protocol          = "HTTP"
+  depends_on        = [aws_alb_target_group.alb_target_group]
+
+  default_action {
+    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    type             = "forward"
+  }
+}
+
+resource "aws_alb_listener" "catwarebankcore" {
+  load_balancer_arn = aws_alb.alb_catwarebank.arn
+  port              = "8080"
   protocol          = "HTTP"
   depends_on        = [aws_alb_target_group.alb_target_group]
 
