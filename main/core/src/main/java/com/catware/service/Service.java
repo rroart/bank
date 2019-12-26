@@ -72,6 +72,12 @@ public class Service implements CommandLineRunner {
 		}
 	}
 
+	@GetMapping(path = "/")
+    public ResponseEntity healthCheck() throws Exception {
+		MyResponse response = new MyResponse(200, "Hello");
+		return aResponse(response);
+	}
+
 	@PostMapping(path = "/consents")
     public ResponseEntity createConsent(@RequestBody Customer customer) throws Exception {
 		ConsentService service = new ServiceFactory().getConsentService(customer.getBank());
