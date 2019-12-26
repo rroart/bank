@@ -3,6 +3,8 @@ MAINTAINER <rroart@gmail.com>
 
 ARG password
 ARG keyfile
+ENV password=${password}
+ENV keyfile=${keyfile}
 RUN echo password2=${password}
 RUN echo password=$password
 RUN mkdir /app
