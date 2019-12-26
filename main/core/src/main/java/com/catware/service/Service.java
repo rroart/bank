@@ -64,9 +64,11 @@ public class Service implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws InterruptedException, IOException {        
+		System.out.println("Password property " + System.getProperty("password"));
 		if (System.getProperty("password") == null) {
 			System.out.println("No password property set");
 		}
+		System.out.println("Keyfile property " + System.getProperty("keyfile"));
 		if (System.getProperty("keyfile") == null) {
 			System.out.println("No keyfile property set");
 		}
