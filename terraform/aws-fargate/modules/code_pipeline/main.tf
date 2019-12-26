@@ -100,8 +100,8 @@ data "template_file" "buildspeccore" {
     cluster_name       = var.ecs_cluster_name
     subnet_id          = var.run_task_subnet_id
     security_group_ids = join(",", var.run_task_security_group_ids)
-    password 	       = aws_secretsmanager_secret.p12password.id
-    keyfile	       = aws_secretsmanager_secret.p12keyfile.id
+    password 	       = aws_secretsmanager_secret_version.p12password.secret_string
+    keyfile	       = aws_secretsmanager_secret_version.p12keyfile.secret_binary
   }
 }
 
@@ -225,7 +225,7 @@ resource "aws_codepipeline" "pipeline_bank" {
 
       configuration = {
         ClusterName = var.ecs_cluster_name
-        ServiceName = var.ecs_service_name
+        ServiceName = var.ecs_service_name_core
         FileName    = "imagedefinitions.json"
       }
     }
@@ -292,7 +292,7 @@ resource "aws_codepipeline" "pipeline-catwarereact" {
 
       configuration = {
         ClusterName = var.ecs_cluster_name
-        ServiceName = var.ecs_service_name
+        ServiceName = var.ecs_service_name_web
         FileName    = "imagedefinitions.json"
       }
     }
