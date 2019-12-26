@@ -3,6 +3,8 @@ MAINTAINER <rroart@gmail.com>
 
 ARG password
 ARG keyfile
+ECHO password=$password
+ECHO password2=${password}
 RUN mkdir /app
 WORKDIR /app
 COPY . .
