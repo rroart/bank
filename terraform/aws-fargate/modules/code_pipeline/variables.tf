@@ -14,7 +14,11 @@ variable "ecs_cluster_name" {
   description = "The cluster that we will deploy"
 }
 
-variable "ecs_service_name" {
+variable "ecs_service_name_web" {
+  description = "The ECS service that will be deployed"
+}
+
+variable "ecs_service_name_core" {
   description = "The ECS service that will be deployed"
 }
 

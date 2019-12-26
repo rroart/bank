@@ -86,12 +86,16 @@ resource "aws_ecs_task_definition" "core" {
 /*====
 App Load Balancer
 ======*/
-resource "random_id" "target_group_sufix" {
+resource "random_id" "target_group_sufix_web" {
   byte_length = 2
 }
 
-resource "aws_alb_target_group" "alb_target_group" {
-  name        = "${var.environment}-alb-target-group-${random_id.target_group_sufix.hex}"
+resource "random_id" "target_group_sufix_core" {
+  byte_length = 2
+}
+
+resource "aws_alb_target_group" "alb_target_group_web" {
+  name        = "${var.environment}-alb-target-group-${random_id.target_group_sufix_web.hex}"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -101,7 +105,21 @@ resource "aws_alb_target_group" "alb_target_group" {
     create_before_destroy = true
   }
 
-  depends_on = [ aws_alb.alb_catwarebank ]
+  depends_on = [ aws_alb.alb_catwarebankweb ]
+}
+
+resource "aws_alb_target_group" "alb_target_group_core" {
+  name        = "${var.environment}-alb-target-group-${random_id.target_group_sufix_core.hex}"
+  port        = 8080
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = "ip"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  depends_on = [ aws_alb.alb_catwarebankcore ]
 }
 
 /* security group for ALB */
@@ -113,13 +131,6 @@ resource "aws_security_group" "web_inbound_sg" {
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -143,37 +154,79 @@ resource "aws_security_group" "web_inbound_sg" {
   }
 }
 
-resource "aws_alb" "alb_catwarebank" {
-  name            = "${var.environment}-alb-catwarebank"
+resource "aws_security_group" "core_inbound_sg" {
+  name        = "${var.environment}-core-inbound-sg"
+  description = "Allow HTTP from Anywhere into ALB"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8
+    to_port     = 0
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.environment}-core-inbound-sg"
+  }
+}
+
+resource "aws_alb" "alb_catwarebankweb" {
+  name            = "${var.environment}-alb-catwarebankweb"
   subnets         = var.public_subnet_ids
   security_groups = flatten([ var.security_groups_ids, aws_security_group.web_inbound_sg.id ])
 
   tags = {
-    Name        = "${var.environment}-alb-catwarebank"
+    Name        = "${var.environment}-alb-catwarebankweb"
+    Environment = var.environment
+  }
+}
+
+resource "aws_alb" "alb_catwarebankcore" {
+  name            = "${var.environment}-alb-catwarebankcore"
+  subnets         = var.public_subnet_ids
+  security_groups = flatten([ var.security_groups_ids, aws_security_group.core_inbound_sg.id ])
+
+  tags = {
+    Name        = "${var.environment}-alb-catwarebankcore"
     Environment = var.environment
   }
 }
 
 resource "aws_alb_listener" "catwarebankweb" {
-  load_balancer_arn = aws_alb.alb_catwarebank.arn
+  load_balancer_arn = aws_alb.alb_catwarebankweb.arn
   port              = "80"
   protocol          = "HTTP"
-  depends_on        = [aws_alb_target_group.alb_target_group]
+  depends_on        = [aws_alb_target_group.alb_target_group_web]
 
   default_action {
-    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    target_group_arn = aws_alb_target_group.alb_target_group_web.arn
     type             = "forward"
   }
 }
 
 resource "aws_alb_listener" "catwarebankcore" {
-  load_balancer_arn = aws_alb.alb_catwarebank.arn
+  load_balancer_arn = aws_alb.alb_catwarebankcore.arn
   port              = "8080"
   protocol          = "HTTP"
-  depends_on        = [aws_alb_target_group.alb_target_group]
+  depends_on        = [aws_alb_target_group.alb_target_group_core]
 
   default_action {
-    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    target_group_arn = aws_alb_target_group.alb_target_group_core.arn
     type             = "forward"
   }
 }
@@ -282,7 +335,7 @@ resource "aws_ecs_service" "web" {
   desired_count = 2
   launch_type   = "FARGATE"
   cluster       = aws_ecs_cluster.cluster.id
-  depends_on    = [aws_iam_role_policy.ecs_service_role_policy, aws_alb_target_group.alb_target_group]
+  depends_on    = [aws_iam_role_policy.ecs_service_role_policy, aws_alb_target_group.alb_target_group_web]
 
   network_configuration {
     security_groups = flatten([ var.security_groups_ids, aws_security_group.ecs_service.id ])
@@ -290,7 +343,7 @@ resource "aws_ecs_service" "web" {
   }
 
   load_balancer {
-    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    target_group_arn = aws_alb_target_group.alb_target_group_web.arn
     container_name   = "web"
     container_port   = "80"
   }
@@ -306,7 +359,7 @@ resource "aws_ecs_service" "core" {
   desired_count = 2
   launch_type   = "FARGATE"
   cluster       = aws_ecs_cluster.cluster.id
-  depends_on    = [aws_iam_role_policy.ecs_service_role_policy, aws_alb_target_group.alb_target_group]
+  depends_on    = [aws_iam_role_policy.ecs_service_role_policy, aws_alb_target_group.alb_target_group_core]
 
   network_configuration {
     security_groups = flatten([ var.security_groups_ids, aws_security_group.ecs_service.id ])
@@ -314,7 +367,7 @@ resource "aws_ecs_service" "core" {
   }
 
   load_balancer {
-    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    target_group_arn = aws_alb_target_group.alb_target_group_core.arn
     container_name   = "core"
     container_port   = "8080"
   }
