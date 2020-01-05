@@ -30,6 +30,7 @@ import com.catware.model.SigningBasketResponse201;
 import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
 import com.catware.util.http.dnb.ErrorUtil;
+import com.catware.util.http.dnb.RedirectUtil;
 import com.catware.util.json.JsonUtil;
 
 public class PaymentServiceImpl extends PaymentService {
@@ -38,7 +39,7 @@ public class PaymentServiceImpl extends PaymentService {
 	public MyResponse getPaymentsToApprove() throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put("PSU-IP-Address", "");
-		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+		header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(null, DNBConstants.GOMULTIPAY));
 		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/payments/approval", null, Constants.GET, header, null).request();
 	}
 
@@ -52,7 +53,7 @@ public class PaymentServiceImpl extends PaymentService {
 			throws IOException, KeyStoreException, UnrecoverableKeyException, KeyManagementException,
 			NoSuchAlgorithmException, CertificateException {
 		header.put(DNBConstants.PSUID, payment.getPsuid());
-		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+		header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(payment.getPsuid(), DNBConstants.GOSINGLEPAY));
 		PaymentInitiationNorwayPostRequest paymentInitiation = new PaymentInitiationNorwayPostRequest();
 		paymentInitiation.setCreditorAccount(convert(payment.getCreditorAccount()));
 		paymentInitiation.setCreditorName(payment.getCreditorName());
@@ -125,7 +126,7 @@ public class PaymentServiceImpl extends PaymentService {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put("PSU-IP-Address", "");
 		header.put(DNBConstants.PSUID, psuid);
-		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+		header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOMULTIPAY));
 		header.put(DNBConstants.TPPEXPLICITAUTHORISATIONPREFERRED, "true");
 		SigningBasketRequest request = new SigningBasketRequest();
 		request.setPaymentIds(paymentIds);
@@ -184,7 +185,7 @@ public class PaymentServiceImpl extends PaymentService {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put("PSU-IP-Address", "");
 		header.put(DNBConstants.PSUID, psuid);
-		header.put(DNBConstants.TPPREDIRECTURI, "http://0.0.0.0:3083");
+		header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOMULTIPAY));
 		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/signing-baskets/" + basketid + "/authorisations", null, Constants.POST, header, "").request();		
 	}
 

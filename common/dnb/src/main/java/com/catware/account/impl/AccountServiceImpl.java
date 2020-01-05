@@ -31,6 +31,7 @@ import com.catware.model.TransactionDetails;
 import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
 import com.catware.util.http.dnb.ErrorUtil;
+import com.catware.util.http.dnb.RedirectUtil;
 import com.catware.util.json.JsonUtil;
 
 public class AccountServiceImpl extends AccountService {
@@ -42,7 +43,7 @@ public class AccountServiceImpl extends AccountService {
 			String consentid = aConsent.getConsentid();
 			Map<String, String> header = new LinkedHashMap<>();
 			header.put(DNBConstants.CONSENTID, consentid);
-			header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
+			header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOLOGIN));
 			MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts", null, Constants.GET, header, null).request();
 			if (response.getCode() != 200) {
 				return ErrorUtil.getError(response);
@@ -99,7 +100,7 @@ public class AccountServiceImpl extends AccountService {
 			header.put(DNBConstants.ACCEPT, "application/json");
 			header.put(DNBConstants.XREQUESTID, requestId);
 			header.put(DNBConstants.CONSENTID, consentid);
-			header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
+			header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOLOGIN));
 			MyResponse transactionResponse = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid, null, Constants.GET, header, null).request();
 			if (transactionResponse.getCode() == 200) {
 				AccountDetails details = JsonUtil.convert(transactionResponse.getBody(), AccountDetails.class);
@@ -163,7 +164,7 @@ public class AccountServiceImpl extends AccountService {
 			String consentid = aConsent.getConsentid();
 			Map<String, String> header = new LinkedHashMap<>();
 			header.put(DNBConstants.CONSENTID, consentid);
-			header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
+			header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOLOGIN));
 			Map<String, String> queries = new HashMap<>();
 			queries.put("bookingStatus", "both");
 			MyResponse transactionResponse = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/accounts/" + accid + "/transactions", queries, Constants.GET, header, null).request();

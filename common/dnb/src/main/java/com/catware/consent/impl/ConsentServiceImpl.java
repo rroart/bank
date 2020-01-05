@@ -25,6 +25,7 @@ import com.catware.model.GetConsentResponse;
 import com.catware.model.HrefType;
 import com.catware.util.http.MyResponse;
 import com.catware.util.http.dnb.DNBRequest;
+import com.catware.util.http.dnb.RedirectUtil;
 import com.catware.util.json.JsonUtil;
 
 public class ConsentServiceImpl extends ConsentService {
@@ -54,7 +55,7 @@ public class ConsentServiceImpl extends ConsentService {
 		
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put(DNBConstants.PSUID, psuid);
-		header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
+		header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOLOGIN));
 		String body = getBody(60);
 		MyResponse response = new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents", null, Constants.POST, header, body).request();
 		String json = response.getBody();
@@ -75,14 +76,14 @@ public class ConsentServiceImpl extends ConsentService {
 	public MyResponse get(String consentid, String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put(DNBConstants.PSUID, psuid);
-		header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
+		header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOLOGIN));
 		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid, null, Constants.GET, header, null).request();
 	}
 	
 	public MyResponse getStatus(String consentid, String psuid) throws UnrecoverableKeyException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		Map<String, String> header = new LinkedHashMap<>();
 		header.put(DNBConstants.PSUID, psuid);
-		header.put(DNBConstants.TPPREDIRECTURI, DNBConstants.DNBREDIRECT);
+		header.put(DNBConstants.TPPREDIRECTURI, RedirectUtil.getUrl(psuid, DNBConstants.GOLOGIN));
 		return new DNBRequest(DNBConstants.PSD2ENDPOINT, "v1/consents/" + consentid + "/status", null, Constants.GET, header, null).request();
 	}
 	

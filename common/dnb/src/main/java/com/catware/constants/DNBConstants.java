@@ -18,7 +18,13 @@ public class DNBConstants {
 
 	public static final String SCAREDIRECT = "scaRedirect";
 
-	public static final String DNBREDIRECT = "http://localhost:3083";
+	public static final String DNBREDIRECT = "http://localhost:3083?psuid=31125464346";
 
 	public static final String TPPEXPLICITAUTHORISATIONPREFERRED = "TPP-Explicit-Authorisation-Preferred";
+
+	public static final int GOLOGIN = 1;
+	
+	public static final int GOSINGLEPAY = 2;
+	
+	public static final int GOMULTIPAY = 3;
 }
