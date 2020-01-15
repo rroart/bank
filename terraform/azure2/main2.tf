@@ -1,5 +1,8 @@
-#provider "azuredevops" {  
+provider "azuredevops" {  
 #    organization = "catware"
-    #token        = "<Your PAT authentication>"
-#    version = ">= 0.0.1"
-#}
+    version = ">= 0.0.1"
+}
+
+resource "azuredevops_project" "project" {
+	 project_name                = "bank"
+}
