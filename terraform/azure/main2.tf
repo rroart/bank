@@ -23,7 +23,7 @@ resource "azuredevops_build_definition" "build" {
     repo_type             = "GitHub"
     repo_name             = "rroart/bank"
     branch_name           = "master"
-    yml_path              = "terraform/azure/azure-pipeline.yml"
+    yml_path              = "terraform/azure/azure-pipeline2.yml"
     service_connection_id = azuredevops_serviceendpoint_github.github_serviceendpoint.id
   }
 }
