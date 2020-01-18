@@ -1,7 +1,5 @@
 trigger:
-  branches:
-    include:
-    - 'master'
+- 'master'
 
 steps:
 - task: Maven@3
