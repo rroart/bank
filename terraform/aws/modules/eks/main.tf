@@ -188,3 +188,95 @@ resource "kubernetes_config_map" "aws_auth_configmap" {
 YAML
   }
 }
+
+resource "kubernetes_pod" "bank" {
+  metadata {
+    name = "bank-example"
+    labels = {
+      App = "bank"
+    }
+  }
+  spec {
+    container {
+      image = "catwarebank-core:latest"
+      name  = "bank-core"
+
+      #args = ["-listen=:80", "-text='Hello World'"]
+      port {
+        container_port = 8080
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "bank" {
+  metadata {
+    name = "bank-example"
+  }
+  spec {
+    selector = {
+      App = kubernetes_pod.bank.metadata[0].labels.App
+    }
+    port {
+      port        = 8080
+      target_port = 8080
+    }
+    type = "LoadBalancer"
+  }
+}
+
+output "lb_ip" {
+  value = kubernetes_service.bank.load_balancer_ingress[0].ip
+}
+
+resource "aws_eks_node_group" "demo" {
+  cluster_name    = var.cluster-name
+  node_group_name = "demo"
+  node_role_arn   = aws_iam_role.demo-group.arn
+  #node_role_arn   = arn:aws:iam::656227074020:role/terraform-eks-demo-cluster
+  subnet_ids      = aws_subnet.demo[*].id
+
+  scaling_config {
+    desired_size = 1
+    max_size     = 1
+    min_size     = 1
+  }
+
+  # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
+  # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
+  depends_on = [
+    aws_iam_role_policy_attachment.demo-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.demo-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.demo-AmazonEC2ContainerRegistryReadOnly,
+  ]
+}
+
+resource "aws_iam_role" "demo-group" {
+  name = "eks-node-group-demo"
+
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "demo-AmazonEKSWorkerNodePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = aws_iam_role.demo-group.name
+}
+
+resource "aws_iam_role_policy_attachment" "demo-AmazonEKS_CNI_Policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.demo-group.name
+}
+
+resource "aws_iam_role_policy_attachment" "demo-AmazonEC2ContainerRegistryReadOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.demo-group.name
+}

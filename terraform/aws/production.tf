@@ -42,3 +42,10 @@ module "eks" {
   #vpc_id             = module.net.vpc_id
 }
 
+module "k8s" {
+  source     = "./modules/k8s"
+}
+
+module "ecr" {
+  source      = "./modules/ecr"
+}
