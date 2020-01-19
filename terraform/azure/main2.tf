@@ -23,7 +23,47 @@ resource "azuredevops_build_definition" "build" {
     repo_type             = "GitHub"
     repo_name             = "rroart/bank"
     branch_name           = "master"
-    yml_path              = "terraform/azure/azure-pipeline2.yml"
+    yml_path              = "terraform/azure/azure-pipeline3.yml"
     service_connection_id = azuredevops_serviceendpoint_github.github_serviceendpoint.id
   }
+
+  variable_groups = [azuredevops_variable_group.vg.id]
+}
+
+resource "azuredevops_variable_group" "vg" {
+  project_id   = azuredevops_project.project.id
+  name         = "Sample VG 1"
+  description  = "A sample variable group."
+  allow_access = true
+
+  variable {
+    name      = "vmImageName"
+    value     = "ubuntu-latest"
+    is_secret = false
+  }
+
+  variable {
+    name      = "imageRepository"
+    value     = azurerm_container_registry.acr.name
+    is_secret = false
+  }
+
+  variable {
+    name      = "dockerfilePath"
+    value     = "."
+    is_secret = false
+  }
+
+  variable {
+    name      = "dockerRegistryServiceConnection"
+    value     = "ubuntu-latest"
+    is_secret = false
+  }
+
+  variable {
+    name      = "tag"
+    value     = "latest"
+    is_secret = false
+  }
+
 }

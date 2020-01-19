@@ -10,14 +10,19 @@ pool:
   - job: Build
     displayName: Build job
     pool:
-      vmImage: $(vmImageName)
+      #vmImage: $(vmImageName)
+      vmImage: "ubuntu-latest"
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
+        #repository: $(imageRepository)
+        repository: "containerRegistryRroart2"
+        #dockerfile: $(dockerfilePath)
+        dockerfile: "."
+        #containerRegistry: $(dockerRegistryServiceConnection)
+        #containerRegistry: "dockerRegistryServiceConnection"
         tags: |
-          $(tag)
+          #$(tag)
+          "latest"
