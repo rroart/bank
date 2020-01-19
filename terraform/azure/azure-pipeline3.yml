@@ -21,7 +21,7 @@ stages:
         #repository: $(imageRepository)
         repository: "containerRegistryRroart2"
         #dockerfile: $(dockerfilePath)
-        dockerfile: "."
+        dockerfile: "./Dockerfile"
         #containerRegistry: $(dockerRegistryServiceConnection)
         #containerRegistry: "dockerRegistryServiceConnection"
         tags: |
