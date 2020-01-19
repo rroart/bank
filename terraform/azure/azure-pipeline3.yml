@@ -25,5 +25,4 @@ stages:
         #containerRegistry: $(dockerRegistryServiceConnection)
         #containerRegistry: "dockerRegistryServiceConnection"
         tags: |
-          #$(tag)
           latest
