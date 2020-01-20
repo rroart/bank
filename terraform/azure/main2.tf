@@ -50,19 +50,31 @@ resource "azuredevops_variable_group" "vg" {
 
   variable {
     name      = "dockerfilePath"
-    value     = "."
+    value     = "./Dockerfile"
     is_secret = false
   }
 
   variable {
     name      = "dockerRegistryServiceConnection"
-    value     = "ubuntu-latest"
+    value     = azurerm_container_registry.acr.login_server
     is_secret = false
   }
 
   variable {
     name      = "tag"
     value     = "latest"
+    is_secret = false
+  }
+
+  variable {
+    name      = "keyfile"
+    value     = azurerm_key_vault_secret.p12keyfile.value
+    is_secret = false
+  }
+
+  variable {
+    name      = "password"
+    value     = azurerm_key_vault_secret.p12password.value
     is_secret = false
   }
 
