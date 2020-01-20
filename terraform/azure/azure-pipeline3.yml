@@ -11,18 +11,22 @@ stages:
   - job: Build
     displayName: Build job
     pool:
-      #vmImage: $(vmImageName)
-      vmImage: "ubuntu-latest"
+      vmImage: $(vmImageName)
     steps:
     - task: Docker@2
-      displayName: Build and push an image to container registry
+      displayName: Build an image
       inputs:
-        command: buildAndPush
-        #repository: $(imageRepository)
-        repository: "containerRegistryRroart2"
-        #dockerfile: $(dockerfilePath)
-        dockerfile: "./Dockerfile"
-        #containerRegistry: $(dockerRegistryServiceConnection)
-        #containerRegistry: "dockerRegistryServiceConnection"
+        command: build
+        repository: $(imageRepository)
+	dockerfile: $(dockerfilePath)
+	arguments: "--build-arg password=${password} --build-arg keyfile=${keyfile}"
         tags: |
-          latest
+          $(tag)
+    - task: Docker@2
+      displayName: Push an image to container registry
+      inputs:
+        command: push
+        repository: $(imageRepository)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
