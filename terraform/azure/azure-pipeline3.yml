@@ -31,7 +31,7 @@ stages:
       displayName: Push an image to container registry
       inputs:
         command: push
-        repository: $(imageRepository)
+        repository: containerregistryrroart2/$(imageRepository)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
