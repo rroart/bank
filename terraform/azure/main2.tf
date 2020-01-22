@@ -79,7 +79,7 @@ resource "azuredevops_variable_group" "vg" {
 
   variable {
     name      = "dockerRegistryServiceConnection"
-    value     = azurerm_container_registry.acr.login_server
+    value     = "containerRegistryRroart2"
     is_secret = false
   }
 
