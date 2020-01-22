@@ -31,7 +31,7 @@ resource "azurerm_storage_account" "example" {
 
   network_rules {
     default_action             = "Deny"
-    ip_rules                   = ["109.189.17.200"]
+    ip_rules                   = ["95.34.148.151"]
     virtual_network_subnet_ids = [azurerm_subnet.example.id]
   }
 
