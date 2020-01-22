@@ -13,6 +13,29 @@ resource "azuredevops_serviceendpoint_github" "github_serviceendpoint" {
   github_service_endpoint_pat = var.github_token
 }
 
+#resource "azuredevops_serviceendpoint_azurerm" "arm" {
+#  project_id            = azuredevops_project.project.id
+#  service_endpoint_name = "Sample ARM Service Connection"
+#    configuration = {
+#    service_principal_username = "..."
+#    service_principal_password = "..."
+#    subscription_id            = "..."
+#    tenant_id                  = "..."
+#  }
+#}
+
+#resource "azuredevops_serviceendpoint_acr" "acr" {
+#  project_id            = azuredevops_project.project.id
+#  service_endpoint_name = "Sample ACR Service Connection"
+#
+#  configuration = {
+#    service_principal_username = azurerm_container_registry.acr.admin_username
+#    service_principal_password = azurerm_container_registry.acr.admin_password
+#    #subscription_id            = "..."
+#    #tenant_id                  = "..."
+#  }
+#}
+
 resource "azuredevops_build_definition" "build" {
   project_id      = azuredevops_project.project.id
   agent_pool_name = "Hosted Ubuntu 1604"
