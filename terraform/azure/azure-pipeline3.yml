@@ -32,7 +32,8 @@ stages:
         command: build
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
-        arguments: "--build-arg password=${password} --build-arg keyfile=${keyfile} -t ***/containerregistryrroart2:$(tag)"
+        containerRegistry: $(dockerRegistryServiceConnection)
+        arguments: "--build-arg password=${password} --build-arg keyfile=${keyfile}"
         tags: |
           $(tag)
     - task: Docker@2
