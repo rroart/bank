@@ -64,3 +64,12 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled            = false
   #georeplication_locations = ["West Europe"]
 }
+
+#data "azurerm_container_registry" "example" {
+#  name                = "containerRegistryRroart2"
+#  resource_group_name = "example-resources"
+#}
+
+#output "login_server" {
+#  value = data.azurerm_container_registry.example.login_server
+#}

@@ -27,17 +27,15 @@ resource "azurerm_app_service" "dockerapp" {
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
 
-    /*
     # Settings for private Container Registires  
-    DOCKER_REGISTRY_SERVER_URL      = ""
-    DOCKER_REGISTRY_SERVER_USERNAME = ""
-    DOCKER_REGISTRY_SERVER_PASSWORD = ""
-    */
+    DOCKER_REGISTRY_SERVER_URL      = "https://${azurerm_container_registry.acr.login_server}"
+    DOCKER_REGISTRY_SERVER_USERNAME = azurerm_container_registry.acr.admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD = azurerm_container_registry.acr.admin_password
   }
 
   # Configure Docker Image to load on start
   site_config {
-    linux_fx_version = "DOCKER|appsvcsample/static-site:latest"
+    linux_fx_version = "DOCKER|https://${azurerm_container_registry.acr.login_server}/containerregistryrroart2:latest"
     always_on        = "true"
   }
 
