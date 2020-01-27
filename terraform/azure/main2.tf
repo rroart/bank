@@ -103,13 +103,13 @@ resource "azuredevops_variable_group" "vg" {
 
   variable {
     name      = "catwareserver"
-    value     = www.azurewebsites.net
+    value     = "www.azurewebsites.net"
     is_secret = false
   }
 
   variable {
     name      = "catwarecoreserver"
-    value     = core.azurewebsites.net
+    value     = "core.azurewebsites.net"
     is_secret = false
   }
 
