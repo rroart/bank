@@ -102,6 +102,7 @@ data "template_file" "buildspeccore" {
     security_group_ids = join(",", var.run_task_security_group_ids)
     password 	       = aws_secretsmanager_secret_version.p12password.secret_string
     keyfile	       = aws_secretsmanager_secret_version.p12keyfile.secret_binary
+    catwareserver      = var.catwareserver
   }
 }
 
@@ -114,6 +115,7 @@ data "template_file" "buildspecweb" {
     cluster_name       = var.ecs_cluster_name
     subnet_id          = var.run_task_subnet_id
     security_group_ids = join(",", var.run_task_security_group_ids)
+    catwareserver      = var.catwarecoreserver
   }
 }
 

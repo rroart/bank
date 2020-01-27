@@ -14,7 +14,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build --build-arg build_without="development test" --build-arg password=${password} --build-arg keyfile=${keyfile} -t $REPOSITORY_URI:latest .
+      - docker build --build-arg build_without="development test" --build-arg password=${password} --build-arg keyfile=${keyfile} --build-arg catwareserver=${catwareserver} -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:

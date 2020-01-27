@@ -5,7 +5,7 @@ public class RedirectUtil {
 		if (System.getProperty("dev") != null) {
 			return "http://localhost:3083/";
 		} else {
-			return "http://www.catwarebank.tk/";
+			return System.getProperty("catwareserver");
 		}
 	}
 	

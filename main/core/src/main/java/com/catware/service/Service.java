@@ -72,6 +72,10 @@ public class Service implements CommandLineRunner {
 		if (System.getProperty("keyfile") == null) {
 			System.out.println("No keyfile property set");
 		}
+		System.out.println("Server property " + System.getProperty("catwareserver"));
+		if (System.getProperty("catwareserver") == null) {
+			System.out.println("No server property set");
+		}
 	}
 
 	@GetMapping(path = "/")

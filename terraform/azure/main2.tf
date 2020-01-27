@@ -101,4 +101,16 @@ resource "azuredevops_variable_group" "vg" {
     is_secret = false
   }
 
+  variable {
+    name      = "catwareserver"
+    value     = www.azurewebsites.net
+    is_secret = false
+  }
+
+  variable {
+    name      = "catwarecoreserver"
+    value     = core.azurewebsites.net
+    is_secret = false
+  }
+
 }

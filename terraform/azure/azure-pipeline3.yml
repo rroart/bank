@@ -33,7 +33,7 @@ stages:
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: "--build-arg password=${password} --build-arg keyfile=${keyfile}"
+        arguments: '--build-arg password=$(password) --build-arg keyfile=$(keyfile) --build-arg catwareserver=$(catwareserver)'
         tags: |
           $(tag)
     - task: Docker@2
