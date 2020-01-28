@@ -36,7 +36,7 @@ resource "azuredevops_serviceendpoint_github" "github_serviceendpoint" {
 #  }
 #}
 
-resource "azuredevops_build_definition" "build" {
+resource "azuredevops_build_definition" "buildcore" {
   project_id      = azuredevops_project.project.id
   agent_pool_name = "Hosted Ubuntu 1604"
   name            = "Build"
@@ -47,6 +47,23 @@ resource "azuredevops_build_definition" "build" {
     repo_name             = "rroart/bank"
     branch_name           = "master"
     yml_path              = "terraform/azure/azure-pipeline3.yml"
+    service_connection_id = azuredevops_serviceendpoint_github.github_serviceendpoint.id
+  }
+
+  variable_groups = [azuredevops_variable_group.vg.id]
+}
+
+resource "azuredevops_build_definition" "buildweb" {
+  project_id      = azuredevops_project.project.id
+  agent_pool_name = "Hosted Ubuntu 1604"
+  name            = "Build"
+  path            = "\\"
+
+  repository {
+    repo_type             = "GitHub"
+    repo_name             = "rroart/catwarereact"
+    branch_name           = "master"
+    yml_path              = "terraform/azure/azure-pipeline4.yml"
     service_connection_id = azuredevops_serviceendpoint_github.github_serviceendpoint.id
   }
 
@@ -79,7 +96,7 @@ resource "azuredevops_variable_group" "vg" {
 
   variable {
     name      = "dockerRegistryServiceConnection"
-    value     = "containerRegistryRroart2"
+    value     = "dockerRegistryServiceConnection"
     is_secret = false
   }
 
@@ -103,13 +120,13 @@ resource "azuredevops_variable_group" "vg" {
 
   variable {
     name      = "catwareserver"
-    value     = "www.azurewebsites.net"
+    value     = "wwwcatwarebank.azurewebsites.net"
     is_secret = false
   }
 
   variable {
     name      = "catwarecoreserver"
-    value     = "core.azurewebsites.net"
+    value     = "corecatwarebank.azurewebsites.net"
     is_secret = false
   }
 

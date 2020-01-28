@@ -17,17 +17,17 @@ stages:
       displayName: Build an image
       inputs:
         command: build
-        repository: bankimage
+        repository: wwwimage
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: '--build-arg password=$(password) --build-arg keyfile=$(keyfile) --build-arg catwareserver=$(catwareserver)'
+        arguments: '--build-arg catwarecoreserver=$(catwarecoreserver)'
         tags: |
           $(tag)
     - task: Docker@2
       displayName: Push an image to container registry
       inputs:
         command: push
-        repository: bankimage
+        repository: wwwimage
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
