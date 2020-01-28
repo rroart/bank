@@ -30,3 +30,13 @@ variable "run_task_security_group_ids" {
   type        = list(string)
   description = "The security group Ids attached where the single run task will be executed"
 }
+
+variable "catwareserver" {
+  description = "Catware Web Server"
+  default = "http://www.catwarebank.tk/"
+}
+
+variable "catwarecoreserver" {
+  description = "Catware Core Server"
+  default = "http://www.corewarebank.tk/"
+}
