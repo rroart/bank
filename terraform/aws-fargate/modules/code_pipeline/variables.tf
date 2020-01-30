@@ -38,5 +38,5 @@ variable "catwareserver" {
 
 variable "catwarecoreserver" {
   description = "Catware Core Server"
-  default = "http://www.corewarebank.tk/"
+  default = "core.catwarebank.tk"
 }
