@@ -39,7 +39,7 @@ resource "azuredevops_serviceendpoint_github" "github_serviceendpoint" {
 resource "azuredevops_build_definition" "buildcore" {
   project_id      = azuredevops_project.project.id
   agent_pool_name = "Hosted Ubuntu 1604"
-  name            = "Build"
+  name            = "Build core"
   path            = "\\"
 
   repository {
@@ -56,7 +56,7 @@ resource "azuredevops_build_definition" "buildcore" {
 resource "azuredevops_build_definition" "buildweb" {
   project_id      = azuredevops_project.project.id
   agent_pool_name = "Hosted Ubuntu 1604"
-  name            = "Build"
+  name            = "Build www"
   path            = "\\"
 
   repository {
