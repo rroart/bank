@@ -17,4 +17,4 @@ RUN cp -p main/core/target/catwarebank-main-core-0.1-SNAPSHOT.jar /usr/local/bin
 WORKDIR /usr/local/bin
 RUN ln -s /tmp /usr/local/logs
 USER root
-CMD java -Dpassword=${password} -Dkeyfile=${keyfile} -Dcatwareserver=${catwareserver} -jar /usr/local/bin/catwarebank-main-core-0.1-SNAPSHOT.jar
+CMD java -Dpassword=${password} -Dkeyfile=${keyfile} -Dcatwareserver=${catwareserver} -Dserver.port=80 -jar /usr/local/bin/catwarebank-main-core-0.1-SNAPSHOT.jar

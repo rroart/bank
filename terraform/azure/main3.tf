@@ -26,7 +26,10 @@ resource "azurerm_app_service" "coredockerapp" {
   # Do not attach Storage by default
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
-    WEBSITES_PORT = 8080
+    #WEBSITES_PORT = 8080
+    #PORT = 8080
+    #"WEBSITES_PORT" = "8080"
+    #"PORT" = "8080"
 
     # Settings for private Container Registires  
     DOCKER_REGISTRY_SERVER_URL = azurerm_container_registry.acr.login_server
