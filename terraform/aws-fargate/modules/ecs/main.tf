@@ -43,7 +43,7 @@ data "template_file" "core_task" {
     fargate_cpu    = var.fargate_cpu
     fargate_memory = var.fargate_memory
     aws_region     = var.aws_region
-    app_port       = 8080
+    app_port       = 80
   }
 }
 
@@ -110,7 +110,7 @@ resource "aws_alb_target_group" "alb_target_group_web" {
 
 resource "aws_alb_target_group" "alb_target_group_core" {
   name        = "${var.environment}-alb-target-group-${random_id.target_group_sufix_core.hex}"
-  port        = 8080
+  port        = 80
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
@@ -160,8 +160,8 @@ resource "aws_security_group" "core_inbound_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -221,7 +221,7 @@ resource "aws_alb_listener" "catwarebankweb" {
 
 resource "aws_alb_listener" "catwarebankcore" {
   load_balancer_arn = aws_alb.alb_catwarebankcore.arn
-  port              = "8080"
+  port              = "80"
   protocol          = "HTTP"
   depends_on        = [aws_alb_target_group.alb_target_group_core]
 
@@ -369,7 +369,7 @@ resource "aws_ecs_service" "core" {
   load_balancer {
     target_group_arn = aws_alb_target_group.alb_target_group_core.arn
     container_name   = "core"
-    container_port   = "8080"
+    container_port   = "80"
   }
   #depends_on = ["aws_alb_target_group.alb_target_group"]
 }
