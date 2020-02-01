@@ -120,7 +120,7 @@ resource "azuredevops_variable_group" "vg" {
 
   variable {
     name      = "catwareserver"
-    value     = "wwwcatwarebank.azurewebsites.net"
+    value     = "http://wwwcatwarebank.azurewebsites.net/"
     is_secret = false
   }
 
