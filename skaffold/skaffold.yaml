@@ -1,0 +1,22 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  name: bankcore
+build:
+  artifacts:
+  - image: bankcore
+    context: ..
+    docker:
+      buildArgs:
+        password: '{{.BANKPASSWORD}}'
+        keyfile: '{{.BANKKEYFILE}}'
+        catwareserver: '{{.BANKCATWARESERVER}}'
+deploy:
+  kubectl:
+    manifests:
+    - k8s-pod.yaml
+portForward:
+  - resourceType: deployment
+    resourceName: bankcore
+    port: 80
+    localPort: 80
